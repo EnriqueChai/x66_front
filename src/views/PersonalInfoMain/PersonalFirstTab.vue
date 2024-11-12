@@ -1,0 +1,113 @@
+<template>
+  <div class="firstTab">
+    <div class="firstTab-top">
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="个人简介" name="first" />
+        <el-tab-pane label="教育背景" name="second" />
+        <el-tab-pane label="兴趣领域" name="third" />
+        <!-- <el-tab-pane label="奖项" name="fourth" />  -->
+      </el-tabs>
+
+      <!-- <p class="firstTab-right" type="primary" :underline="false">
+        <span style="color: #9ca2ac">浏览量 335</span>
+        <a style="border: none;"><svg-icon icon-class="map" /> 职业迁徙</a>
+      </p> -->
+    </div>
+
+    <div class="content">
+      <div v-if="activeName === 'first'" class="content-first">{{ authorBio }}</div>
+      <div v-if="activeName === 'second'" class="content-first">{{ authorAdu }}</div>
+      <div v-if="activeName === 'third'" class="content-first">{{ authorInterests }}</div>
+      <!-- <div v-if="activeName === 'fourth'">fourth</div> -->
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  computed: {
+    ...mapGetters([
+      'authorOrg',
+      'authorAdu',
+      'authorBio',
+      'authorInterests'
+    ])
+  },
+  data() {
+    return {
+      activeName: 'first'
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.firstTab {
+  box-sizing: border-box;
+  margin: 0 auto 30px;
+  padding: 0 20px 0 20px;
+  width: 1300px;
+  height: 175px;
+  display: flex;
+  flex-direction: column;
+  background: rgb(255, 255, 255);
+  border-radius: 15px;
+  box-shadow: 0 0 10px 0 #a8a8a8;
+
+  .firstTab-top {
+    width: 100%;
+    height: 50px;
+    align-content: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    // align-items: center;
+    border-bottom: 2px solid #E4E7ED;
+
+    .firstTab-right {
+      width: 300px;
+      height: 50px;
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      font-size: 16px;
+      margin: 0;
+
+      span,
+      a {
+        font-size: 16px;
+        margin-left: 20px;
+      }
+    }
+  }
+
+  .content {
+    width: 1260px;
+
+    .content-first {
+      margin-top: 10px;
+      width: 1260px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 5;
+      /* 限制显示6行 */
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .el-tabs {
+    width: 1300px;
+    padding-left: 15px;
+    text-align: center;
+
+    .el-tabs__item {
+      height: 50px !important;
+      line-height: 50px;
+      font-size: 16px;
+    }
+  }
+}
+</style>
