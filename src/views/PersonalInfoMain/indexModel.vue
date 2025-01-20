@@ -2,7 +2,7 @@
   <div class="backPage" v-loading.fullscreen.lock="fullscreenLoading">
     <!-- 头部区域 -->
     <PersonalNewHead :authorId="authorId" />
-    <el-select v-model="modelId" placeholder="请选择模型">
+    <el-select v-model="modelId" style="margin-left: 310px; margin-bottom: 30px;" placeholder="请选择模型">
       <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
     </el-select>
 
@@ -72,6 +72,10 @@ export default {
       flex-direction: column;
       box-sizing: border-box;
     }
+  }
+
+  .el-input--suffix .el-input__inner {
+    width: 400px;
   }
 
   li {
