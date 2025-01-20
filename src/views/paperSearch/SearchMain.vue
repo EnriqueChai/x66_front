@@ -8,9 +8,9 @@
     <div class="searchMainTab">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="综合" name="first" />
-        <el-tab-pane label="h指数" name="second" />
+        <!-- <el-tab-pane label="h指数" name="second" /> -->
         <el-tab-pane label="引用数" name="third" />
-        <el-tab-pane label="论文数" name="fourth" />
+        <!-- <el-tab-pane label="论文数" name="fourth" /> -->
       </el-tabs>
     </div>
 
@@ -35,7 +35,7 @@ export default {
     return {
       activeName: 'first',
       currentPage: 1,
-      pageSize: 5
+      pageSize: 10
     }
   },
   computed: {
@@ -58,7 +58,6 @@ export default {
           sortedAuthors.sort((a, b) => b.npubs - a.npubs)
           break
         default:
-          sortedAuthors = this.author
           break
       }
       return sortedAuthors
@@ -92,7 +91,7 @@ export default {
   border-radius: 15px;
   margin: 0px;
   justify-content: space-between;
-  box-shadow: 0 0 5px 0 #a8a8a8;
+  // box-shadow: 0 0 5px 0 #a8a8a8;
   background-image: linear-gradient(#dff3f9, #ffffff, #ffffff, #ffffff);
   flex: 4;
 

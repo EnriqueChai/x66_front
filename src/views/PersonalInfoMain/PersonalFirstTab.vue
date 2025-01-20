@@ -1,5 +1,5 @@
 <template>
-  <div class="firstTab">
+  <div class="firstTab" v-loading="loading">
     <div class="firstTab-top">
       <el-tabs v-model="activeName">
         <el-tab-pane label="个人简介" name="first" />
@@ -16,7 +16,7 @@
 
     <div class="content">
       <div v-if="activeName === 'first'" class="content-first">{{ authorBio }}</div>
-      <div v-if="activeName === 'second'" class="content-first">{{ authorAdu }}</div>
+      <div v-if="activeName === 'second'" class="content-first">{{ strippedAuthorAdu }}</div>
       <div v-if="activeName === 'third'" class="content-first">{{ authorInterests }}</div>
       <!-- <div v-if="activeName === 'fourth'">fourth</div> -->
     </div>
@@ -24,20 +24,59 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { getAuthorInfo } from '@/api/authorInfo'
 
 export default {
-  computed: {
-    ...mapGetters([
-      'authorOrg',
-      'authorAdu',
-      'authorBio',
-      'authorInterests'
-    ])
+  props: {
+    authorId: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
-      activeName: 'first'
+      activeName: 'first',
+      authorBio: '',
+      authorAdu: '',
+      authorInterests: '',
+      loading: false
+    }
+  },
+  computed: {
+    strippedAuthorAdu() {
+      return this.stripHtmlTags(this.authorAdu);
+    }
+  },
+  watch: {
+    authorId(newId) {
+      if (newId) {
+        this.fetchAuthorDetails()
+      }
+    }
+  },
+  created() {
+    if (this.authorId) {
+      this.fetchAuthorDetails()
+    }
+  },
+  methods: {
+    stripHtmlTags(html) {
+      if (!html) return '';
+      return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<[^>]+>/g, '')
+    },
+    async fetchAuthorDetails() {
+      this.loading = true
+      try {
+        const res = await getAuthorInfo(this.authorId)
+        this.authorBio = res.biography || '暂无简介'
+        this.authorAdu = res.education || '暂无教育背景'
+        this.authorInterests = res.interests || '暂无兴趣领域'
+        this.loading = false
+      } catch (error) {
+        console.error('获取作者详细信息失败:', error)
+      }
     }
   }
 }
@@ -54,7 +93,7 @@ export default {
   flex-direction: column;
   background: rgb(255, 255, 255);
   border-radius: 15px;
-  box-shadow: 0 0 10px 0 #a8a8a8;
+  // box-shadow: 0 0 10px 0 #a8a8a8;
 
   .firstTab-top {
     width: 100%;
@@ -91,6 +130,7 @@ export default {
       width: 1260px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
+      white-space: pre-wrap;
       -webkit-line-clamp: 5;
       /* 限制显示6行 */
       overflow: hidden;

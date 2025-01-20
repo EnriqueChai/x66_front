@@ -2,11 +2,11 @@
   <div class="simAuthListContainer">
     <a :href="authorPageLink" target="_blank" rel="noopener noreferrer" class="authLink">
       <div class="headImg">
-        <img v-if="simAuthor.picture" :src="simAuthor.picture" style="height: 70px; width: 70px" />
-        <img v-else src="../../assets/touxiang.jpg" style="height: 70px; width: 70px" />
+        <img v-if="simAuthor.picture" :src="simAuthor.picture" style="height: 70px; width: 70px; border-radius: 50%;" />
+        <img v-else src="../../assets/touxiang.jpg" style="height: 70px; width: 70px; border-radius: 50%;" />
       </div>
       <div class="name">
-        {{ simAuthor.authorName }}
+        {{ abbreviatedName }}
       </div>
     </a>
   </div>
@@ -27,6 +27,20 @@ export default {
         query: { authorId: this.simAuthor.authorId }
       });
       return route.href;
+    },
+    abbreviatedName() {
+      if (!this.simAuthor.authorName) return '';
+
+      const nameParts = this.simAuthor.authorName.trim().split(' ');
+
+      if (nameParts.length === 1) {
+        return `${nameParts[0].charAt(0).toUpperCase()}.`;
+      } else {
+        const firstNameInitial = nameParts[0].charAt(0).toUpperCase();
+        const lastName = nameParts[nameParts.length - 1];
+        const capitalizedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+        return `${firstNameInitial}. ${capitalizedLastName}`;
+      }
     }
   }
 }
@@ -42,6 +56,7 @@ export default {
     justify-content: center;
     align-items: center;
   }
+
   .name {
     margin-top: 8px;
     width: 90px;

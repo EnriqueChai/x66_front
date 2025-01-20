@@ -1,5 +1,5 @@
 <template>
-  <div class="recomMainContainer">
+  <div class="recomMainContainer" v-loading="loading">
     <div class="tab">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="推荐" name="first" />
@@ -18,8 +18,7 @@
 <script>
 
 import RecomMainList from './RecomMainList.vue'
-import { mapState } from 'vuex'
-
+import { getRecomPaper } from '@/api/getRecomPaper'
 
 
 export default {
@@ -28,15 +27,15 @@ export default {
   },
   data() {
     return {
+      paper: [],
       activeName: 'first',
       currentPage: 1,
-      pageSize: 5
+      pageSize: 10,
+      loading: true
     }
   },
 
   computed: {
-    ...mapState('recomPaper', ['paper']),
-
     paginatedPapers() {
       // 分页
       const start = (this.currentPage - 1) * this.pageSize
@@ -45,7 +44,20 @@ export default {
     }
   },
 
+  created() {
+    this.fetchRecomPapers()
+  },
+
   methods: {
+    async fetchRecomPapers() {
+      try {
+        const res = await getRecomPaper()
+        this.paper = res
+        this.loading = false
+      } catch (error) {
+        console.error('获取推荐论文数据失败:', error)
+      }
+    },
     handleSizeChange(size) {
       this.pageSize = size
       this.currentPage = 1
@@ -53,9 +65,6 @@ export default {
     handlePageChange(page) {
       this.currentPage = page
     }
-  },
-  mounted() {
-    console.log('Papers in RecomMain:', this.paper);
   }
 }
 </script>
@@ -66,7 +75,6 @@ export default {
   background: rgb(255, 255, 255);
   background-image: linear-gradient(#dff3f9, #ffffff, #ffffff, #ffffff, #ffffff);
   border-radius: 15px;
-  box-shadow: 0 0 10px 0 #a8a8a8;
   margin: 0 15px 30px 0;
   padding: 0 20px;
   flex: 3;
@@ -96,7 +104,7 @@ export default {
   .el-pagination {
     text-align: center;
     margin-top: 40px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
   }
 }
 </style>

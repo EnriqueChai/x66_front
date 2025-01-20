@@ -2,19 +2,18 @@
   <div class="backPage" v-loading.fullscreen.lock="fullscreenLoading">
     <!-- 头部区域 -->
     <PersonalNewHead :authorId="authorId" />
-
-    <!-- 第一个tabs -->
-    <PersonalFirstTab :authorId="authorId" />
+    <el-select v-model="modelId" placeholder="请选择模型">
+      <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
+    </el-select>
 
     <!-- 主显示区 -->
     <div class="main">
       <!-- 主要数据展示区 -->
-      <PersonalMainArea :authorId="authorId" />
+      <PersonalMainArea :authorId="authorId" :modelId="modelId" />
 
       <div class="sideArea">
-        <PersonalWordCloud :authorId="authorId" />
         <!-- <PersonalAuthorStatistic :authorId="authorId" /> -->
-        <PersonalSimilarAuthor :authorId="authorId" />
+        <PersonalSimilarAuthor :authorId="authorId" :modelId="modelId" />
       </div>
     </div>
   </div>
@@ -22,28 +21,30 @@
 
 <script>
 import PersonalNewHead from './PersonalNewHead.vue'
-import PersonalFirstTab from './PersonalFirstTab.vue'
 import PersonalMainArea from './PersonalMainArea.vue'
-import PersonalWordCloud from './PersonalWordCloud.vue'
 import PersonalSimilarAuthor from './PersonalSimilarAuthor.vue'
-import PersonalCorAuthor from './PersonalCorAuthor.vue'
-import PersonalAuthorStatistic from './PersonalAuthorStatistic.vue'
 
 export default {
   components: {
     PersonalNewHead,
-    PersonalFirstTab,
     PersonalMainArea,
-    PersonalWordCloud,
-    PersonalAuthorStatistic,
     PersonalSimilarAuthor,
-    PersonalCorAuthor
   },
   data() {
     return {
       fullscreenLoading: false,
-      authorId: this.$route.query.authorId
+      authorId: this.$route.query.authorId,
+      modelId: '',
+      modelOptions: [
+        { label: 'Default', value: '0' },
+        { label: 'GPTGNN', value: '1' },
+        { label: 'LMCH', value: '2' },
+        { label: 'WalkLM', value: '3' },
+      ],
     }
+  },
+  mounted() {
+    console.log("Received authorId:", this.authorId)
   }
 
 }

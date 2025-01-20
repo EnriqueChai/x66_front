@@ -20,6 +20,12 @@
 <script>
 
 export default {
+  props: {
+    authorId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       paperListLength: 0,
@@ -42,7 +48,7 @@ export default {
   },
   watch: {
     '$store.state.authorInfo.authorInfo'(newVal) {
-      if(newVal) {
+      if (newVal) {
         this.getData()
       }
     }

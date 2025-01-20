@@ -1,13 +1,13 @@
 <template>
   <div class="backPage">
-    <SearchHead :searchType="currentView"  />
+    <SearchHead :searchType="currentView" />
 
     <div class="content">
       <div class="switchBtn">
         <el-button round @click="toggleView('author')">作者</el-button>
         <el-button round @click="toggleView('paper')">论文</el-button>
       </div>
-      
+
       <SearchMain v-if="currentView === 'author'" />
       <SearchMainPaper v-if="currentView === 'paper'" />
     </div>

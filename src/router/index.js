@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/signup'
+    redirect: '/recommend'
   },
   {
     path: '/interests',
@@ -35,6 +35,11 @@ const routes = [
     path: '/recommend',
     name: 'recommend',
     component: () => import('@/views/PaperRecommend/index')
+  },
+  {
+    path: '/Model',
+    name: 'Model',
+    component: () => import('@/views/PersonalInfoMain/indexModel')
   }
 ]
 

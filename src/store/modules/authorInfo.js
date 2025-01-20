@@ -2,11 +2,7 @@ export default {
   namespaced: true,
   state () {
     return {
-      authorInfo: {
-        author: {},
-        papers: [],
-        simAuthor: []
-      }
+      authorInfo: {}
     }
   },
 

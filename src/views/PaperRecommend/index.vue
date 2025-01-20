@@ -5,7 +5,7 @@
     </div>
 
     <div class="recomContainer">
-      <RecomMain v-if="recodeMainRef"/>
+      <RecomMain v-if="recodeMainRef" />
     </div>
 
   </div>
@@ -16,9 +16,9 @@ import RecomHead from './RecomHead.vue'
 import RecomMain from './RecomMain.vue'
 
 export default {
-  data(){
-    return{
-      recodeMainRef:false
+  data() {
+    return {
+      recodeMainRef: false
     }
   },
   components: {
@@ -26,7 +26,7 @@ export default {
     RecomMain,
   },
   created() {
-    this.recodeMainRef=true
+    this.recodeMainRef = true
   }
 }
 </script>
@@ -40,13 +40,13 @@ export default {
   .recomHead {
     width: 1300px;
     margin: 0 auto 30px;
-    height: 130px;
+    height: 230px;
   }
 
   .recomContainer {
     display: flex;
     width: 1300px;
-    height: 1200px;
+    // height: 1400px;
     margin: 0 auto 30px;
     box-sizing: border-box;
   }

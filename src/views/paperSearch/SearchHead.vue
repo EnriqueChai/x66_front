@@ -40,11 +40,10 @@ export default {
     async handleSearch() {
       this.fullscreenLoading = true
       const res = await getAllAuthor(this.input)
-      const resPaper=await getPaper(this.input)
+      const resPaper = await getPaper(this.input)
       this.fullscreenLoading = false
       this.$store.commit('author/setAuthor', res)
       this.$store.commit('paper/setPaper', resPaper)
-      console.log(resPaper)
     },
     clearSearch() {
       this.input = ''

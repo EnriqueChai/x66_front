@@ -1,32 +1,38 @@
 <template>
   <div class="searchListContainer">
     <div class="searchListLeft">
-      <img src="../../assets/touxiang.jpg" style="height: 60px; width: 60px">
+      <img v-if="author.avatar" :src="author.avatar" style="height: 60px; width: 60px; border-radius: 50%;" />
+      <img v-else src="../../assets/touxiang.jpg" style="height: 60px; width: 60px; border-radius: 50%;" />
     </div>
     <div class="searchListRight">
       <div class="listRightTop">
         <div class="topLeft">
-          <!-- <h2>{{ author.authorName }}</h2> -->
           <router-link :to="{ name: 'personalPage', query: { authorId: author.id } }">
-            <h2>{{ author.name }}</h2>
+            <h2>{{ formattedName }}</h2>
           </router-link>
-          <div>
-            <el-tag type="warning">H-index: {{ Math.floor(author.hindex) }}</el-tag>
-            <el-tag>论文数: {{ Math.floor(author.npubs) }}</el-tag>
+
+          <div class="tag-class">
+            <!-- <el-tag type="warning">H-index: {{ Math.floor(author.hindex) }}</el-tag> -->
+            <!-- <el-tag>论文数: {{ Math.floor(author.npubs) }}</el-tag> -->
             <el-tag>引用数: {{ Math.floor(author.ncitation) }}</el-tag>
+            <el-tag v-if="author.field" type="warning"
+              style="font-size: 16px; height: 28px; margin-right: 40px;">研究领域：{{
+                author.field
+              }}</el-tag>
+            <el-tag v-if="author.rec" class="recommend-tag" type="success" effect="light" size="small">
+              你可能感兴趣
+            </el-tag>
           </div>
         </div>
         <div class="topRight">
-          <!-- <el-button @click="follow">+ 关注</el-button> -->
+          <!-- <el-button plain round @click="Model">模型对比</el-button> -->
+
         </div>
       </div>
       <div class="listRightMid">
         <div class="midTop">
-          <!-- <svg-icon icon-class="gwb" />
-          {{ author.position }} -->
           <svg-icon icon-class="jigou" />
-          <!-- {{ author.authorOrg }} -->
-          <span :title="author.authorOrg">{{ author.org }}</span>
+          <span :title="formattedOrg"> {{ formattedOrg }}</span>
         </div>
         <div class="midBottom">
           <!-- 研究领域: {{ author.biography }} -->
@@ -55,22 +61,83 @@ export default {
   props: {
     author: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
+  },
+  computed: {
+    // 格式化后的作者姓名
+    formattedName() {
+      return this.toTitleCase(this.author.name);
+    },
+    // 格式化后的机构名称
+    formattedOrg() {
+      return this.toProperCase(this.author.org);
+    },
   },
   methods: {
-    follow() {
-      alert('已关注')
-    }
-  }
-}
+    Model() {
+      this.$router.push({ name: 'Model', query: { authorId: this.author.id } });
+    },
+    // 将字符串转换为标题格式（每个单词首字母大写）
+    toTitleCase(str) {
+      if (!str) return "";
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    },
+    // 将机构名称转换为合适的格式（介词、冠词等小写）
+    toProperCase(str) {
+      if (!str) return "";
+      const lowercaseWords = [
+        "of",
+        "the",
+        "and",
+        "in",
+        "on",
+        "for",
+        "at",
+        "by",
+        "from",
+        "with",
+        "about",
+        "as",
+        "into",
+        "like",
+        "through",
+        "after",
+        "over",
+        "between",
+        "out",
+        "against",
+        "during",
+        "without",
+        "before",
+        "under",
+        "around",
+        "among",
+      ];
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word, index) => {
+          if (index !== 0 && lowercaseWords.includes(word)) {
+            return word;
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
+    },
+  },
+};
 </script>
 
 <style lang="scss">
 .searchListContainer {
   display: flex;
   width: 100%;
-  height: 200px;
+  height: 150px;
   padding: 20px;
   border-bottom: 1px solid rgb(229, 231, 236);
 
@@ -90,6 +157,10 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+
+        .tag-class {
+          margin-top: 10px;
+        }
       }
     }
 
@@ -136,6 +207,10 @@ export default {
     margin-block-end: 0px;
   }
 
+  h2:hover {
+    text-decoration: underline;
+  }
+
   .el-tag {
     margin: 0 5px;
     font-size: 14px;
@@ -145,7 +220,7 @@ export default {
 
   ul {
     display: flex;
-    // padding-left: 60px;
+    /* padding-left: 60px; */
     margin-block-start: 0px;
     margin-block-end: 0px;
 
