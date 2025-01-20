@@ -82,10 +82,10 @@ export default {
       type: String,
       required: true
     },
-    // modelId: {
-    //   type: String,
-    //   default: '0'
-    // }
+    modelId: {
+      type: String,
+      default: '0'
+    }
   },
   data() {
     return {
@@ -149,8 +149,8 @@ export default {
     async getPaperList() {
       try {
         this.loading = true
-        // const res = await getAuthorPaper(this.authorId, this.modelId)
-        const res = await getAuthorPaper(this.authorId)
+        const res = await getAuthorPaper(this.authorId, this.modelId)
+        // const res = await getAuthorPaper(this.authorId)
         // 假设 res 为包含论文信息的数组
         this.allData = res.map(paper => ({
           ...paper,
@@ -395,11 +395,11 @@ export default {
       this.currentPage = 1
       this.updateTableData()
     },
-    // modelId(newId) {
-    //   if (newId) {
-    //     this.getPaperList()
-    //   }
-    // }
+    modelId(newId) {
+      if (newId) {
+        this.getPaperList()
+      }
+    }
   },
   mounted() {
     this.getPaperList()

@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="topRight">
-          <!-- <el-button plain round @click="Model">模型对比</el-button> -->
+          <el-button plain round @click="Model">模型对比</el-button>
 
         </div>
       </div>

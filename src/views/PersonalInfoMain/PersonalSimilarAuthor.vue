@@ -21,10 +21,10 @@ export default {
       type: String,
       required: true
     },
-    // modelId: {
-    //   type: String,
-    //   default: '0'
-    // }
+    modelId: {
+      type: String,
+      default: '0'
+    }
   },
   data() {
     return {
@@ -38,11 +38,11 @@ export default {
         this.fetchSimilarAuthors()
       }
     },
-    // modelId(newId) {
-    //   if (newId) {
-    //     this.fetchSimilarAuthors()
-    //   }
-    // }
+    modelId(newId) {
+      if (newId) {
+        this.fetchSimilarAuthors()
+      }
+    }
   },
   created() {
     if (this.authorId) {
@@ -52,8 +52,8 @@ export default {
   methods: {
     async fetchSimilarAuthors() {
       try {
-        // const res = await getSimAuthor(this.authorId, this.modelId)
-        const res = await getSimAuthor(this.authorId)
+        const res = await getSimAuthor(this.authorId, this.modelId)
+        // const res = await getSimAuthor(this.authorId)
         if (Array.isArray(res)) {
           this.simAuthor = res
         } else {
