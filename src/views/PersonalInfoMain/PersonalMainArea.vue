@@ -30,6 +30,9 @@
               <div style="color: #1a73e8;">
                 {{ row.authors }}
               </div>
+              <div style="color: #f19e38;">
+                研究领域： {{ row.field }}
+              </div>
             </template>
           </el-table-column>
 
@@ -150,6 +153,8 @@ export default {
       try {
         this.loading = true
         const res = await getAuthorPaper(this.authorId, this.modelId)
+        console.log(res);
+
         // const res = await getAuthorPaper(this.authorId)
         // 假设 res 为包含论文信息的数组
         this.allData = res.map(paper => ({

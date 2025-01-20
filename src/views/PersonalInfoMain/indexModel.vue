@@ -2,9 +2,13 @@
   <div class="backPage" v-loading.fullscreen.lock="fullscreenLoading">
     <!-- 头部区域 -->
     <PersonalNewHead :authorId="authorId" />
-    <el-select v-model="modelId" style="margin-left: 310px; margin-bottom: 30px;" placeholder="请选择模型">
-      <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
+    <div class="model" style="background: #f7fbfd; border-radius: 15px; margin-bottom: 20px;">
+      <p style="margin-left: 50px; margin-right: 20px; font-size: 20px;">请选择您想要使用的模型： </p>
+      <el-select v-model="modelId" placeholder="请选择模型">
+        <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+    </div>
+
 
     <!-- 主显示区 -->
     <div class="main">
@@ -60,6 +64,12 @@ export default {
     text-decoration: none;
   }
 
+  .model {
+    display: flex;
+    width: 1300px;
+    margin: auto;
+  }
+
   .main {
     display: flex;
     width: 1300px;
@@ -72,6 +82,10 @@ export default {
       flex-direction: column;
       box-sizing: border-box;
     }
+  }
+
+  .el-select {
+    margin: auto 0;
   }
 
   .el-input--suffix .el-input__inner {

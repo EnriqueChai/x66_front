@@ -1,6 +1,6 @@
 <template>
   <div class="recomHeadContainer">
-    <h1 class="main-title">GAMMAScholar 科技文献分析系统</h1>
+    <h1 class="main-title">GFMBench 科技文献分析系统</h1>
     <div class="recomSearch">
       <div class="inputFrame">
         <el-input v-model="input" placeholder="请输入内容" />

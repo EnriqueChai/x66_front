@@ -83,6 +83,8 @@ export default {
 
   h3 {
     margin-left: 13px;
+    margin-top: 0px;
+    padding-top: 18px;
   }
 
   .authorGrid {
