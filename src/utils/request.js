@@ -1,7 +1,8 @@
 import axios from 'axios'
 
+const currentBaseURL = window.location.origin
 const instance = axios.create({
-  baseURL: 'http://10.112.231.70:8080',
+  baseURL: currentBaseURL, 
   timeout: 1000000
 })
 
