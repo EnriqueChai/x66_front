@@ -5,7 +5,7 @@
     <div class="model" style="background: #f7fbfd; border-radius: 15px; margin-bottom: 20px;">
       <p style="margin-left: 50px; margin-right: 20px; font-size: 20px;">请选择您想要使用的模型： </p>
       <el-select v-model="modelId" placeholder="请选择模型">
-        <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option v-for="(value, key) in modelOptions" :key="key" :label="value" :value="key" />
       </el-select>
     </div>
 
@@ -27,6 +27,7 @@
 import PersonalNewHead from './PersonalNewHead.vue'
 import PersonalMainArea from './PersonalMainArea.vue'
 import PersonalSimilarAuthor from './PersonalSimilarAuthor.vue'
+import { getModel } from '@/api/getModel'
 
 export default {
   components: {
@@ -39,12 +40,22 @@ export default {
       fullscreenLoading: false,
       authorId: this.$route.query.authorId,
       modelId: '',
-      modelOptions: [
-        { label: 'Default', value: '0' },
-        { label: 'GPTGNN', value: '1' },
-        { label: 'LMCH', value: '2' },
-        { label: 'WalkLM', value: '3' },
-      ],
+      modelOptions: [],
+    }
+  },
+  created() {
+    this.getModelList()
+  },
+  methods: {
+    async getModelList() {
+      try {
+        const res = await getModel()
+        this.modelOptions = Object.values(res)
+        console.log(this.modelOptions)
+      } catch (error) {
+        console.error('获取模型列表失败:', error)
+        this.modelOptions = []
+      }
     }
   },
   mounted() {

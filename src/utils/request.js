@@ -1,10 +1,15 @@
 import axios from 'axios'
 
-const currentBaseURL = window.location.origin
 const instance = axios.create({
-  baseURL: currentBaseURL, 
+  baseURL: 'http://39.106.34.142:8080/',
   timeout: 1000000
 })
+
+// const currentBaseURL = window.location.origin
+// const instance = axios.create({
+//   baseURL: currentBaseURL, 
+//   timeout: 1000000
+// })
 
 instance.interceptors.request.use(function(config) {
   return config
