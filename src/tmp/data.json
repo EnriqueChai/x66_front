@@ -1,0 +1,222 @@
+{
+    "venue": {
+      "auto_id": 3124,  // 原 venue.auto_id
+      "id": null,       // 原 venue 无 id，可置 null
+      "full_name": "IEEE Conference on Computer Vision and Pattern Recognition",
+      "short_name": "CVPR",
+      "category": "conference",                        // conference / journal
+      "fields": ["Computer Vision", "Artificial Intelligence"], // 主要研究领域
+      "editions": 38                                   // 截至 2024 年共 38 届
+    },
+  
+    "metrics": {
+      "submissions_recent": {                          // 近三年投稿量
+        "2022": 9157,
+        "2023": 10641,
+        "2024": 12002
+      },
+      "accept_rate_recent": {                          // 近三年录取率 (%)
+        "2022": 25.3,
+        "2023": 24.2,
+        "2024": 22.1
+      },
+      "citations_recent": {                            // 近三年总引用量
+        "2022": 310000,
+        "2023": 345000,
+        "2024": 380000
+      },
+      "ccf_rank": "A",                                 // CCF 推荐等级
+      "impact_factor": null,                           // 会议无 IF，期刊可填具体值
+      "h5_index": 346,
+      "h5_median": 566,
+      "avg_citations_5y": 38.5,                        // 近 5 年平均引用
+      "median_citations_5y": 25                        // 近 5 年引用中位数
+    },
+  
+    "high_impact": {
+      "top_authors": [                                 // 高引作者（按 citations 排序）
+        { "auto_id": 2918,   "id": 1984838606, "author": "Li Fei‑Fei",         "paper_count": 14, "total_citations": 13377, "fields": ["Categorization","Computer Vision"],        "peak_years": [2010, 2014] },
+        { "auto_id": 32899,  "id": 2200192130, "author": "Jian Sun",           "paper_count": 11, "total_citations": 12419, "fields": ["Scalability","Deep Learning"],           "peak_years": [2015, 2016] },
+        { "auto_id": 7131,   "id": 2473549963, "author": "Ross B. Girshick",   "paper_count": 10, "total_citations": 12070, "fields": ["Object Detection","Speedup"],            "peak_years": [2014, 2015] },
+        { "auto_id": 323,    "id": 2174985400, "author": "Trevor Darrell",     "paper_count": 13, "total_citations": 10471, "fields": ["Real‑Time Systems","Computer Vision"],   "peak_years": [2013, 2014] },
+        { "auto_id": 17462,  "id": 1964982643, "author": "Richard Socher",     "paper_count":  8, "total_citations":  8705, "fields": ["Paraphrase","NLP","Vision‑Language"],    "peak_years": [2014, 2015] }
+      ],
+      "top_institutions": [
+        { "institution": "Google Research",   "paper_count": 254, "total_citations": 450123 },
+        { "institution": "Microsoft Research", "paper_count": 199, "total_citations": 312450 }
+      ],
+      "top_papers": [                                   // 高引论文
+        { "auto_id": 263433, "id": 2194775991, "title": "Deep Residual Learning for Image Recognition",        "year": 2016, "citations": 38912 },
+        { "auto_id": 260605, "id": 2161969291, "title": "Histograms of Oriented Gradients for Human Detection","year": 2005, "citations": 37300 },
+        { "auto_id": 265141, "id": 2108598243, "title": "ImageNet: A Large‑Scale Hierarchical Image Database", "year": 2009, "citations": 32590 }
+      ],
+      "best_papers": [
+        { "title": "Taming the Waves: Controllable Video Generation", "year": 2023 }
+      ]
+    },
+  
+    "authors": [                                       // 原 authors 列表（10 位）
+      { "auto_id": 2918,   "id": 1984838606, "name": "Li Fei‑Fei",        "total_citations": 13377, "fields": ["Categorization","Vision"],            "affiliation": "Stanford University",      "country": "USA"  },
+      { "auto_id": 32899,  "id": 2200192130, "name": "Jian Sun",          "total_citations": 12419, "fields": ["Scalability","Computer Vision"],      "affiliation": "MEGVII",                   "country": "China"},
+      { "auto_id": 7131,   "id": 2473549963, "name": "Ross B. Girshick",  "total_citations": 12070, "fields": ["Object Detection","Speedup"],         "affiliation": "Meta AI",                  "country": "USA"  },
+      { "auto_id": 323,    "id": 2174985400, "name": "Trevor Darrell",    "total_citations": 10471, "fields": ["Real‑Time Systems","Vision"],         "affiliation": "UC Berkeley",              "country": "USA"  },
+      { "auto_id": 17462,  "id": 1964982643, "name": "Richard Socher",    "total_citations":  8705, "fields": ["Paraphrase","Vision‑Language"],       "affiliation": "You.com",                  "country": "USA"  },
+      { "auto_id": 78180,  "id": 2164292938, "name": "Kaiming He",        "total_citations":  8377, "fields": ["Pyramid","Deep Learning"],            "affiliation": "FAIR ‑ Meta AI",           "country": "China"},
+      { "auto_id": 9540,   "id": 2136556746, "name": "Jitendra Malik",    "total_citations":  7934, "fields": ["RGB Color Model","Computer Vision"],  "affiliation": "UC Berkeley",              "country": "USA"  },
+      { "auto_id": 96794,  "id": 2133088636, "name": "Jeff Donahue",      "total_citations":  6393, "fields": ["Classifier","Deep Learning"],         "affiliation": "Google DeepMind",          "country": "USA"  },
+      { "auto_id": 115198, "id": 2119543935, "name": "Shaoqing Ren",      "total_citations":  6032, "fields": ["Mobile Phone","Object Detection"],    "affiliation": "Shanghai AI Lab",          "country": "China"},
+      { "auto_id": 73151,  "id": 2111851554, "name": "Cordelia Schmid",   "total_citations":  5421, "fields": ["Repeatability","Computer Vision"],    "affiliation": "INRIA",                    "country": "France"}
+    ],
+  
+    "recommended_reviewers": [                        // 扁平化去重后共 21 位
+      { "auto_id": 26831,  "id":   331124168, "name": "Christian Szegedy",       "fields": ["Artificial Neural Network"], "affiliation": "Google",         "total_citations": 4822 },
+      { "auto_id": 26835,  "id": 2022840042, "name": "Vincent Vanhoucke",        "fields": ["Artificial Neural Network"], "affiliation": "Google",         "total_citations": 3620 },
+      { "auto_id": 26836,  "id":   37905947, "name": "Pierre Sermanet",          "fields": ["Artificial Neural Network","Robotics"], "affiliation": "Google DeepMind", "total_citations": 2494 },
+      { "auto_id": 26829,  "id": 2617788377, "name": "Wei Liu",                  "fields": ["Baseline","Object Detection"], "affiliation": "Tencent AI",    "total_citations": 2134 },
+      { "auto_id": 5924,   "id": 2291154966, "name": "Raquel Urtasun",           "fields": ["Biometrics","Autonomous Driving"], "affiliation": "Waabi",     "total_citations": 2550 },
+      { "auto_id": 26830,  "id": 2430826622, "name": "Scott E. Reed",            "fields": ["Bootstrapping","Generative Models"], "affiliation": "DeepMind","total_citations": 2815 },
+      { "auto_id": 467795, "id": 2170199860, "name": "Navneet Dalal",            "fields": ["Computer Vision","Feature Engineering"], "affiliation": " INRIA","total_citations": 3980 },
+      { "auto_id": 5017,   "id": 2138495596, "name": "Jean Ponce",               "fields": ["Formalism","Computer Vision"], "affiliation": "Ecole Normale Sup.", "total_citations": 3554 },
+      { "auto_id": 58669,  "id": 2057410742, "name": "Bill Triggs",              "fields": ["Geodetic Datum","Optimization"], "affiliation": "INRIA",      "total_citations": 5069 },
+      { "auto_id": 25535,  "id": 2115844506, "name": "Lijia Li",                 "fields": ["Image Retrieval","Vision"],    "affiliation": "Alibaba DAMO",  "total_citations": 4444 },
+      { "auto_id": 125800, "id":   46106380, "name": "Andrej Karpathy",          "fields": ["Image Retrieval","Vision‑Language"], "affiliation": "OpenAI", "total_citations": 4106 },
+      { "auto_id": 154845, "id": 2967563870, "name": "Jun Deng",                 "fields": ["Image Retrieval"],             "affiliation": "Xi'an Jiaotong Univ.", "total_citations": 3369 },
+      { "auto_id": 154844, "id": 2968554593, "name": "Kehui Li",                 "fields": ["Image Retrieval"],             "affiliation": "USTC",          "total_citations": 3259 },
+      { "auto_id": 154846, "id": 2969250883, "name": "Wenjie Dong",              "fields": ["Image Retrieval"],             "affiliation": "USTC",          "total_citations": 3259 },
+      { "auto_id": 1463,   "id": 1436821675, "name": "Rahul Sukthankar",         "fields": ["LCD","Multimedia"],            "affiliation": "Google",        "total_citations": 2299 },
+      { "auto_id": 26834,  "id": 2036321405, "name": "Dragomir Anguelov",        "fields": ["Markov Chain","Self‑Driving"], "affiliation": "Waymo",         "total_citations": 2214 },
+      { "auto_id": 115198, "id": 2119543935, "name": "Shaoqing Ren",             "fields": ["Mobile Phone","Object Detection"], "affiliation": "Shanghai AI Lab", "total_citations": 6032 },
+      { "auto_id": 26833,  "id": 2102002796, "name": "Yangqing Jia",             "fields": ["Monte Carlo","Deep Learning"], "affiliation": "Alibaba",       "total_citations": 5080 },
+      { "auto_id": 62521,  "id": 2112161334, "name": "David Nister",             "fields": ["Motion Estimation","SLAM"],    "affiliation": "Microsoft",     "total_citations": 1359 },
+      { "auto_id": 37236,  "id": 1976950599, "name": "Marcaurelio Ranzato",      "fields": ["Numeral System","Deep Learning"], "affiliation": "DeepMind",  "total_citations": 3237 },
+      { "auto_id": 160948, "id": 2499063207, "name": "Xiangyu Zhang",            "fields": ["Pyramid","Model Compression"], "affiliation": "MEGVII",        "total_citations": 4886 },
+      { "auto_id": 73151,  "id": 2111851554, "name": "Cordelia Schmid",          "fields": ["Repeatability","Computer Vision"], "affiliation": "INRIA",  "total_citations": 5421 },
+      { "auto_id": 26832,  "id": 2308824398, "name": "Dumitru Erhan",            "fields": ["Semi‑Supervised Learning"],    "affiliation": "Google",        "total_citations": 4271 },
+      { "auto_id": 20188,  "id": 2059111593, "name": "Lior Wolf",                "fields": ["Similarity Measure","Vision"], "affiliation": "Tel‑Aviv Univ.", "total_citations": 2352 },
+      { "auto_id": 60035,  "id":     7233622, "name": "Svetlana Lazebnik",       "fields": ["Spin‑½","Scene Recognition"],  "affiliation": "UNC Chapel Hill","total_citations": 4105 }
+    ],
+  
+    "papers": [                                         // 共 10 篇；示例保留首段摘要
+      {
+        "auto_id": 260605,
+        "id": 2161969291,
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "type": "paper",
+        "year": 2005,
+        "citations": 3730,
+        "abstract": "We study the question of feature sets for robust visual object recognition; adopting linear SVM‑based human detection as a test case...",
+        "themes": ["Feature Engineering","Human Detection"],
+        "author_regions": ["France","UK"],
+        "author_affiliations": ["INRIA","University of Oxford"]
+      },
+      {
+        "auto_id": 265141,
+        "id": 2108598243,
+        "title": "ImageNet: A Large‑Scale Hierarchical Image Database",
+        "type": "paper",
+        "year": 2009,
+        "citations": 3259,
+        "abstract": "We introduce ImageNet, a large‑scale ontology of images built upon the WordNet structure, aiming to populate 80,000 synsets with over 14 million images...",
+        "themes": ["Dataset","Large‑Scale Learning"],
+        "author_regions": ["China","USA"],
+        "author_affiliations": ["Princeton University","Stanford University"]
+      },
+      {
+        "auto_id": 263433,
+        "id": 2194775991,
+        "title": "Deep Residual Learning for Image Recognition",
+        "type": "paper",
+        "year": 2016,
+        "citations": 2630,
+        "abstract": "We present a residual learning framework to ease the training of networks that are substantially deeper than those used previously...",
+        "themes": ["Deep Learning","Image Recognition"],
+        "author_regions": ["China"],
+        "author_affiliations": ["Microsoft Research Asia"]
+      },
+      {
+        "auto_id": 264790,
+        "id": 2102605133,
+        "title": "Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation",
+        "type": "paper",
+        "year": 2014,
+        "citations": 2409,
+        "abstract": "We propose a simple and scalable detection algorithm that improves mean average precision (mAP) by more than 30% on VOC 2012...",
+        "themes": ["Object Detection","CNN"],
+        "author_regions": ["USA"],
+        "author_affiliations": ["UC Berkeley"]
+      },
+      {
+        "auto_id": 262908,
+        "id": 2097117768,
+        "title": "Going Deeper with Convolutions",
+        "type": "paper",
+        "year": 2015,
+        "citations": 1897,
+        "abstract": "We propose an Inception architecture that efficiently increases depth and width while keeping computational budget constant...",
+        "themes": ["CNN Architecture","ImageNet"],
+        "author_regions": ["USA"],
+        "author_affiliations": ["Google"]
+      },
+      {
+        "auto_id": 262681,
+        "id": 2162915993,
+        "title": "Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene Categories",
+        "type": "paper",
+        "year": 2006,
+        "citations": 1545,
+        "abstract": "We present a method for recognizing scene categories based on approximate global geometric correspondence using spatial pyramids...",
+        "themes": ["Scene Recognition","Spatial Pyramid"],
+        "author_regions": ["USA","France"],
+        "author_affiliations": ["UIUC","INRIA"]
+      },
+      {
+        "auto_id": 261686,
+        "id": 2145287260,
+        "title": "DeepFace: Closing the Gap to Human‑Level Performance in Face Verification",
+        "type": "paper",
+        "year": 2014,
+        "citations": 873,
+        "abstract": "We revisit alignment and representation by employing explicit 3D face modeling and a nine‑layer deep neural network...",
+        "themes": ["Face Recognition","Deep Learning"],
+        "author_regions": ["Israel","USA"],
+        "author_affiliations": ["Facebook AI Research"]
+      },
+      {
+        "auto_id": 261651,
+        "id": 2128017662,
+        "title": "Scalable Recognition with a Vocabulary Tree",
+        "type": "paper",
+        "year": 2006,
+        "citations": 781,
+        "abstract": "We present a recognition scheme that scales efficiently to a large number of objects using a hierarchical vocabulary tree...",
+        "themes": ["Image Retrieval","Vocabulary Tree"],
+        "author_regions": ["Sweden","USA"],
+        "author_affiliations": ["Lund University","Google"]
+      },
+      {
+        "auto_id": 265132,
+        "id": 2150066425,
+        "title": "Are We Ready for Autonomous Driving? The KITTI Vision Benchmark Suite",
+        "type": "paper",
+        "year": 2012,
+        "citations": 754,
+        "abstract": "We develop challenging benchmarks for stereo, optical flow, visual odometry/SLAM and 3D object detection using our autonomous driving platform...",
+        "themes": ["Benchmark","Autonomous Driving"],
+        "author_regions": ["Germany","Canada"],
+        "author_affiliations": ["KITTI","University of Toronto"]
+      },
+      {
+        "auto_id": 263662,
+        "id": 2016053056,
+        "title": "Large‑Scale Video Classification with Convolutional Neural Networks",
+        "type": "paper",
+        "year": 2014,
+        "citations": 711,
+        "abstract": "We provide an extensive empirical evaluation of CNNs on large‑scale video classification using a new dataset of one million YouTube videos...",
+        "themes": ["Video Classification","Deep Learning"],
+        "author_regions": ["USA"],
+        "author_affiliations": ["Stanford University"]
+      }
+    ]
+  }
+  

@@ -13,6 +13,9 @@ import '@/icons' // 引入图标
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
+// 创建事件总线实例
+Vue.prototype.$bus = new Vue();
+
 new Vue({
   router,
   store,

@@ -1,12 +1,49 @@
 <template>
   <div class="recomHeadContainer">
-    <h1 class="main-title">GFMBench 科技文献分析系统</h1>
-    <div class="recomSearch">
-      <div class="inputFrame">
-        <el-input v-model="input" placeholder="请输入内容" />
-        <el-tag v-if="input" @click="clearSearch">清空</el-tag>
-        <el-button icon="el-icon-search" circle @click="handleSearch"
-          v-loading.fullscreen.lock="fullscreenLoading"></el-button>
+    <div class="header-content">
+      <h1 class="main-title">
+        <div class="title-line">GFMBench</div>
+        <div class="subtitle-line">科技文献分析系统</div>
+      </h1>
+      
+      <div class="search-section">
+        <div class="recomSearch">
+          <div class="inputFrame">
+            <el-input 
+              v-model="input" 
+              placeholder="输入关键词搜索文献..."
+              prefix-icon="el-icon-search"
+              @keyup.enter="handleSearch"
+            />
+            <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">清空</el-tag>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              class="search-button"
+              @click="handleSearch"
+              v-loading.fullscreen.lock="fullscreenLoading"
+              :disabled="!input.trim()"
+            >
+              搜索
+            </el-button>
+          </div>
+        </div>
+        
+        <div class="search-tip" v-if="!recentlySearched">
+          <div class="simple-hot-search">
+            <span class="hot-search-label">大家都在搜:</span>
+            <div class="hot-search-items">
+              <span 
+                v-for="(tag, index) in hotTags.slice(0, 6)" 
+                :key="index"
+                @click="quickSearch(tag)"
+                class="hot-search-item"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -20,130 +57,278 @@ export default {
   data() {
     return {
       input: '',
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      hotTags: ['人工智能', '机器学习', '大语言模型', '图神经网络', '知识图谱', '强化学习'],
+      recentlySearched: false
     }
   },
   methods: {
     async handleSearch() {
-      this.fullscreenLoading = true
-      const res = await getAllAuthor(this.input)
-      const resPaper = await getPaper(this.input)
-      this.fullscreenLoading = false
-      this.$store.commit('author/setAuthor', res)
-      this.$store.commit('paper/setPaper', resPaper)
-      this.$router.push({ name: 'searchPage' })
+      if (!this.input.trim()) return;
+      
+      this.fullscreenLoading = true;
+      try {
+        const res = await getAllAuthor(this.input);
+        const resPaper = await getPaper(this.input);
+        
+        if (res) {
+          this.$store.commit('author/setAuthor', res);
+        }
+        
+        if (resPaper) {
+          this.$store.commit('paper/setPaper', resPaper);
+        }
+        
+        this.recentlySearched = true;
+        this.$router.push({ name: 'searchPage' });
+      } catch (error) {
+        console.error('搜索失败:', error);
+        this.$message.error('搜索失败，请稍后重试');
+      } finally {
+        this.fullscreenLoading = false;
+      }
     },
     clearSearch() {
       this.input = '';
+    },
+    quickSearch(tag) {
+      this.input = tag;
+      this.handleSearch();
     }
   }
 }
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
 
 .recomHeadContainer {
-  // text-align: center;
-  /* 居中对齐 */
-  padding: 40px 20px;
-  /* 增加内边距 */
-
-  .main-title {
-    font-family: 'Poppins', sans-serif;
-    /* 使用现代字体 */
-    font-size: 48px;
-    /* 增大字体大小 */
-    font-weight: 700;
-    background: linear-gradient(90deg, #5CB2EB, #2F80ED);
-    /* 渐变色 */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    /* 文字阴影 */
-    margin-bottom: 30px;
-    /* 标题与搜索框之间的间距 */
-    animation: fadeIn 2s ease-in-out;
-    /* 淡入动画 */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .header-content {
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .recomSearch {
+  .main-title {
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 1.1;
+    animation: fadeIn 1.2s ease-out;
+    
+    .title-line {
+      font-family: 'Poppins', sans-serif;
+      font-size: 60px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 20px rgba(0, 0, 150, 0.15);
+      animation: titlePulse 2s infinite alternate ease-in-out;
+    }
+    
+    .subtitle-line {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 32px;
+      opacity: 0.85;
+      font-weight: 500;
+      margin-top: 8px;
+      background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeInSub 1.5s ease-out;
+    }
+  }
+
+  .search-section {
+    width: 100%;
     display: flex;
-    justify-content: center;
-    /* 居中搜索框 */
-    /* 其他现有样式保持不变 */
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .recomSearch {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: slideUp 0.8s ease-out 0.3s backwards;
+  }
+  
+  .search-tip {
+    display: flex;
+    margin-top: 14px;
+    animation: fadeIn 1s ease-out 0.8s backwards;
+    width: 100%;
+    max-width: 800px;
+    
+    .simple-hot-search {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      
+      .hot-search-label {
+        font-size: 14px;
+        color: #606266;
+        margin-right: 10px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      
+      .hot-search-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        
+        .hot-search-item {
+          font-size: 13px;
+          color: #409EFF;
+          cursor: pointer;
+          transition: all 0.2s;
+          position: relative;
+          
+          &:hover {
+            color: #66b1ff;
+            text-decoration: underline;
+          }
+          
+          &:not(:last-child):after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 12px;
+            background-color: #DCDFE6;
+          }
+        }
+      }
+    }
   }
 }
 
-/* 淡入动画定义 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
+/* 动画定义 */
+@keyframes titlePulse {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
   }
+  100% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
 
-  to {
+@keyframes fadeInSub {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .recomSearch {
   display: flex;
-  height: 50px;
-  width: 975px;
+  height: 56px;
+  width: 100%;
   box-sizing: border-box;
-  background: rgb(255, 255, 255);
-  border-radius: 15px;
-  border: 2px solid rgb(92, 178, 235);
-
-  .el-select {
-    height: 50px;
-    width: 130px;
-    line-height: 50px;
-    padding-left: 10px;
-
-    .el-input__inner {
-      border: none;
-      border-right: 1px solid #C0C4CC;
-      text-align: center;
-      font-size: 15px;
-    }
-
-    .el-input__inner::placeholder {
-      color: black;
-    }
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  border: 2px solid rgba(92, 178, 235, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 110, 255, 0.15);
+  transition: all 0.3s ease;
+  
+  &:hover, &:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 110, 255, 0.2);
+    border-color: rgba(92, 178, 235, 1);
   }
 
   .inputFrame {
     display: flex;
     flex: 1;
     justify-content: space-between;
-    height: 50px;
-    line-height: 50px;
+    height: 52px;
+    line-height: 52px;
     align-items: center;
+    padding: 0 6px 0 20px;
 
     .el-input {
-      padding-left: 10px;
+      flex: 1;
+      
+      .el-input__inner {
+        border: none;
+        font-size: 16px;
+        background: transparent;
+        height: 52px;
+        padding-left: 8px;
+        
+        &::placeholder {
+          color: #909399;
+          font-size: 16px;
+        }
+      }
     }
 
-    .el-input__inner {
+    .search-button {
+      height: 46px;
+      border-radius: 23px;
+      padding: 0 20px;
+      font-size: 16px;
+      background: linear-gradient(90deg, #4d98ff, #2579ff);
       border: none;
-      font-size: 15px;
-      width: 800px;
+      margin-left: 10px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(90deg, #2579ff, #1e6dff);
+        transform: translateY(-1px);
+      }
+      
+      &:active {
+        transform: translateY(1px);
+      }
     }
 
-    .el-button {
-      margin-right: 20px;
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
-      padding: 0;
-    }
-
-    .el-tag {
-      margin-right: 20px;
+    .clear-tag {
+      margin-right: 10px;
       cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
 }
