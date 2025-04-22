@@ -29,16 +29,25 @@
               <p class="global-paper-abstract">{{ currentPaper.summary || currentPaper.abstract || '暂无摘要' }}</p>
             </div>
             
-            <div class="global-modal-section theme-section" v-if="currentPaper.themes && currentPaper.themes.length">
+            <div class="global-modal-section theme-section">
               <h3><i class="el-icon-collection-tag"></i> 主题标签</h3>
               <div class="global-themes-container">
+                <template v-if="currentPaper.themes && currentPaper.themes.length > 0">
+                  <el-tag 
+                    v-for="(theme, i) in currentPaper.themes" 
+                    :key="i" 
+                    effect="dark" 
+                    class="global-theme-tag"
+                  >
+                    {{ theme }}
+                  </el-tag>
+                </template>
                 <el-tag 
-                  v-for="(theme, i) in currentPaper.themes" 
-                  :key="i" 
+                  v-else
                   effect="dark" 
                   class="global-theme-tag"
                 >
-                  {{ theme }}
+                  未知主题
                 </el-tag>
               </div>
             </div>
@@ -47,12 +56,12 @@
               <div class="global-info-item">
                 <i class="el-icon-date"></i>
                 <div>
-                  <h4>发表年份</h4>
-                  <p>{{ formatYear(currentPaper.time) }}</p>
+                  <h4>发表时间</h4>
+                  <p>{{ formatYear(currentPaper.time || currentPaper.year) }}</p>
                 </div>
               </div>
               
-              <div class="global-info-item" v-if="currentPaper.citations">
+              <div class="global-info-item">
                 <i class="el-icon-reading"></i>
                 <div>
                   <h4>引用次数</h4>
@@ -100,10 +109,34 @@ export default {
       return typeof author === 'object' ? (author.name || '未知作者') : author;
     },
     formatYear(timeStr) {
-      if (!timeStr) return '未知年份';
-      // 尝试从时间字符串中提取年份
-      const year = timeStr.toString().slice(0, 4);
-      return /^\d{4}$/.test(year) ? year : '未知年份';
+      if (!timeStr) return '未知日期';
+      
+      // 处理日期的多种可能情况
+      const timeValue = String(timeStr);
+      
+      // 1. 如果是完整的日期字符串（如 "2023-01-15"）
+      if (/^\d{4}-\d{2}-\d{2}$/.test(timeValue)) {
+        return timeValue;
+      }
+      
+      // 2. 如果是带时间的日期字符串（如 "2023-01-15 12:00:00"）
+      if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/.test(timeValue)) {
+        return timeValue.split(' ')[0];
+      }
+      
+      // 3. 如果是纯数字且是4位，直接作为年份
+      if (/^\d{4}$/.test(timeValue)) return timeValue;
+      
+      // 4. 尝试从时间字符串中提取完整日期
+      const dateMatch = timeValue.match(/\d{4}-\d{2}-\d{2}/);
+      if (dateMatch) return dateMatch[0];
+      
+      // 5. 尝试匹配任何形式的4位数年份
+      const yearMatch = timeValue.match(/\b(19|20)\d{2}\b/);
+      if (yearMatch) return yearMatch[0];
+      
+      // 都无法匹配则返回未知日期
+      return '未知日期';
     },
     openPaperModal(paper) {
       this.currentPaper = paper;
@@ -133,7 +166,8 @@ export default {
       }, 300);
     },
     downloadPdf() {
-      if (this.currentPaper.pdfUrl) {
+      if (this.currentPaper && this.currentPaper.pdfUrl) {
+        // 直接打开 PDF 链接
         window.open(this.currentPaper.pdfUrl, '_blank');
       } else {
         this.$message({

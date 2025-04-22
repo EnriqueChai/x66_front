@@ -24,21 +24,32 @@
 
         <div class="paper-meta">
           <span class="meta-item">
-            <i class="el-icon-date"></i> {{ formatYear(paper.time) }}
+            <i class="el-icon-date"></i> {{ formatYear(paper.time || paper.year) }}
           </span>
-          <span class="meta-item" v-if="paper.citations">
-            <i class="el-icon-reading"></i> 引用: {{ paper.citations }}
+          <span class="meta-item">
+            <i class="el-icon-reading"></i> 引用: {{ paper.citations !== undefined && paper.citations !== null ? paper.citations : 0 }}
           </span>
-          <div class="theme-tags" v-if="paper.themes && paper.themes.length">
+          <div class="theme-tags">
+            <template v-if="paper.themes && paper.themes.length > 0">
+              <el-tag 
+                v-for="(theme, i) in paper.themes" 
+                :key="i" 
+                size="mini" 
+                effect="plain" 
+                type="info"
+                class="theme-tag"
+              >
+                {{ theme }}
+              </el-tag>
+            </template>
             <el-tag 
-              v-for="(theme, i) in paper.themes" 
-              :key="i" 
+              v-else
               size="mini" 
               effect="plain" 
               type="info"
               class="theme-tag"
             >
-              {{ theme }}
+              未知主题
             </el-tag>
           </div>
           <el-button 
@@ -52,78 +63,6 @@
           >查看详情</el-button>
         </div>
       </div>
-    </div>
-
-    <!-- 使用v-if替代Teleport -->
-    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
-      <transition name="modal-fade">
-        <div v-if="showModalContent" class="modal-content">
-          <button class="close-button" @click="closeModal">×</button>
-          <div class="modal-header">
-            <h2>{{ paper.title || '未知标题' }}</h2>
-          </div>
-          <div class="modal-body">
-            <div class="modal-section">
-              <h3><i class="el-icon-user"></i> 作者</h3>
-              <p class="author-list">
-                <span v-if="(paper.authors || []).length > 0">
-                  <span v-for="(author, index) in (paper.authors || [])" :key="index">
-                    <span class="author-name modal-author">{{ formatAuthor(author) }}</span>
-                    <span v-if="index < (paper.authors || []).length - 1">, </span>
-                  </span>
-                </span>
-                <span v-else>未知作者</span>
-              </p>
-            </div>
-            
-            <div class="modal-section">
-              <h3><i class="el-icon-document-copy"></i> 摘要</h3>
-              <p class="paper-abstract">{{ paper.summary || '暂无摘要' }}</p>
-            </div>
-            
-            <div class="modal-section theme-section" v-if="paper.themes && paper.themes.length">
-              <h3><i class="el-icon-collection-tag"></i> 主题标签</h3>
-              <div class="themes-container">
-                <el-tag 
-                  v-for="(theme, i) in paper.themes" 
-                  :key="i" 
-                  effect="dark" 
-                  class="large-theme-tag"
-                >
-                  {{ theme }}
-                </el-tag>
-              </div>
-            </div>
-            
-            <div class="modal-section modal-info">
-              <div class="info-item">
-                <i class="el-icon-date"></i>
-                <div>
-                  <h4>发表年份</h4>
-                  <p>{{ formatYear(paper.time) }}</p>
-                </div>
-              </div>
-              
-              <div class="info-item" v-if="paper.citations">
-                <i class="el-icon-reading"></i>
-                <div>
-                  <h4>引用次数</h4>
-                  <p>{{ paper.citations }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal-footer">
-            <el-button type="primary" icon="el-icon-download" round @click="downloadPdf">
-              下载 PDF
-            </el-button>
-            <el-button type="success" icon="el-icon-star-off" round>
-              收藏
-            </el-button>
-          </div>
-        </div>
-      </transition>
     </div>
   </div>
 </template>
@@ -173,10 +112,40 @@ export default {
       return typeof author === 'object' ? (author.name || '未知作者') : author;
     },
     formatYear(timeStr) {
-      if (!timeStr) return '未知年份';
-      // 尝试从时间字符串中提取年份
-      const year = timeStr.toString().slice(0, 4);
-      return /^\d{4}$/.test(year) ? year : '未知年份';
+      if (!timeStr) return '未知日期';
+      
+      // 处理日期的多种可能情况
+      const timeValue = String(timeStr);
+      
+      // 1. 如果是完整的日期字符串（如 "2023-01-15"）
+      if (/^\d{4}-\d{2}-\d{2}$/.test(timeValue)) {
+        return timeValue;
+      }
+      
+      // 2. 如果是带时间的日期字符串（如 "2023-01-15 12:00:00"）
+      if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/.test(timeValue)) {
+        return timeValue.split(' ')[0];
+      }
+      
+      // 3. 如果是纯数字且是4位，直接作为年份
+      if (/^\d{4}$/.test(timeValue)) return timeValue;
+      
+      // 4. 如果是year字段，直接获取
+      if (this.paper && this.paper.year) {
+        const year = String(this.paper.year);
+        if (/^\d{4}$/.test(year)) return year;
+      }
+      
+      // 5. 尝试从时间字符串中提取完整日期
+      const dateMatch = timeValue.match(/\d{4}-\d{2}-\d{2}/);
+      if (dateMatch) return dateMatch[0];
+      
+      // 6. 尝试匹配任何形式的4位数年份
+      const yearMatch = timeValue.match(/\b(19|20)\d{2}\b/);
+      if (yearMatch) return yearMatch[0];
+      
+      // 都无法匹配则返回未知日期
+      return '未知日期';
     },
     openModal() {
       // 使用事件总线触发全局事件，由App.vue或Layout组件处理模态框显示
@@ -192,8 +161,8 @@ export default {
       // 键盘事件处理也将由处理模态框的组件负责
     },
     downloadPdf() {
-      // 如果有PDF链接就打开，否则提示
-      if (this.paper.pdfUrl) {
+      if (this.paper && this.paper.pdfUrl) {
+        // 直接打开 PDF 链接
         window.open(this.paper.pdfUrl, '_blank');
       } else {
         this.$message({
@@ -202,6 +171,20 @@ export default {
         });
       }
     }
+  },
+  mounted() {
+    // 确保在组件挂载时数据已经准备好
+    this.$nextTick(() => {
+      if (this.paper) {
+        // 手动触发一次数据处理，确保年份和引用量数据已准备就绪
+        if (this.paper.time) {
+          this.formatYear(this.paper.time);
+        }
+        if (this.paper.year) {
+          this.formatYear(this.paper.year);
+        }
+      }
+    });
   }
 };
 </script>

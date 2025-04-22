@@ -15,7 +15,11 @@
         <div class="venue-details">
           <div class="venue-stat">
             <span class="stat-label">CCF</span>
-            <span class="stat-value">{{ venue.metrics.ccf_rank }}</span>
+            <span class="stat-value" :class="{
+              'ccf-a': venue.metrics.ccf_rank === 'A',
+              'ccf-b': venue.metrics.ccf_rank === 'B',
+              'ccf-c': venue.metrics.ccf_rank === 'C'
+            }">{{ venue.metrics.ccf_rank }}</span>
           </div>
           <div class="venue-stat">
             <span class="stat-label">Accept</span>
@@ -323,7 +327,7 @@ export default {
 
 // 会议列表样式
 .venue-list {
-  padding: 12px 20px;
+  padding: 12px 12px;
   
   .venue-item {
     position: relative;
@@ -333,6 +337,8 @@ export default {
     transition: all 0.3s;
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
     
     &:hover {
       transform: translateY(-2px);
@@ -389,16 +395,15 @@ export default {
           font-weight: bold;
           color: #2c3e50;
           
-          // CCF A类为红色，B类为绿色，C类为蓝色
-          &:contains("A") {
+          &.ccf-a {
             color: #e74c3c;
           }
           
-          &:contains("B") {
+          &.ccf-b {
             color: #27ae60;
           }
           
-          &:contains("C") {
+          &.ccf-c {
             color: #3498db;
           }
         }

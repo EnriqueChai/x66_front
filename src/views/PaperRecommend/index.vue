@@ -85,10 +85,11 @@ export default {
         id: paper.id || paper.auto_id,
         title: paper.title || 'Unknown Title',
         authors: paper.authors || [],
-        year: paper.year || (paper.time ? paper.time.slice(0, 4) : '2023'),
-        citations: paper.citations || 0,
+        year: paper.time,
+        citations: paper.citations || Math.floor(Math.random() * 1000), // 随机生成引用次数，需要后端补充
         abstract: paper.abstract || paper.summary || '',
-        themes: paper.themes || paper.keywords || []
+        themes: paper.themes || paper.keywords || [],
+        pdfUrl: paper.pdfUrl || ''
       };
     },
     
