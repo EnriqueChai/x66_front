@@ -425,6 +425,7 @@ export default {
   flex: 3;
   box-sizing: border-box;
   background: rgb(255, 255, 255);
+
   border-radius: 15px;
   margin: 0 15px 30px 0;
   padding: 0 20px;

@@ -6,10 +6,13 @@
       <div class="switchBtn">
         <el-button round @click="toggleView('author')">作者</el-button>
         <el-button round @click="toggleView('paper')">论文</el-button>
+        <el-button round @click="toggleView('conference')">期刊会议</el-button>
       </div>
 
       <SearchMain v-if="currentView === 'author'" />
       <SearchMainPaper v-if="currentView === 'paper'" />
+      <SearchMainConference v-if="currentView === 'conference'" />
+
     </div>
 
   </div>
@@ -20,13 +23,15 @@ import SearchHead from './SearchHead.vue'
 import MultiLevelFilter from '@/components/MultiLevelFilter/index.vue'
 import SearchMain from './SearchMain.vue'
 import SearchMainPaper from './SearchMainPaper.vue'
+import SearchMainConference from './SearchMainConference.vue'
 
 export default {
   components: {
     SearchHead,
     MultiLevelFilter,
     SearchMain,
-    SearchMainPaper
+    SearchMainPaper,
+    SearchMainConference
   },
   data() {
     return {

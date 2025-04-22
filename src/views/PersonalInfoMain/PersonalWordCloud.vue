@@ -176,6 +176,7 @@ export default {
 .firstSide {
   box-sizing: border-box;
   background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-radius: 15px;
   margin: 0 0 30px 15px;
 

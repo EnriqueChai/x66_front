@@ -19,23 +19,19 @@
       <!-- 各年份论文数 -->
       <div class="statItem">
         <strong>年份： </strong>
-        <template v-for="(count, year) in yearDistribution">
-          <el-tag :key="year" class="statTag" :type="isYearSelected(year) ? 'primary' : 'warning'"
-            @click="handleYearFilter(year)">
-            {{ year }} 年: {{ count }}
-          </el-tag>
-        </template>
+        <el-tag v-for="(count, year) in yearDistribution" :key="year" class="statTag"
+          :type="isYearSelected(year) ? 'primary' : 'warning'" @click="handleYearFilter(year)">
+          {{ year }} 年: {{ count }}
+        </el-tag>
       </div>
 
       <!-- 各期刊论文数 -->
       <div class="statItem">
         <strong>期刊： </strong>
-        <template v-for="(count, venue) in venueDistribution">
-          <el-tag :key="venue" class="statTag" :type="isVenueSelected(venue) ? 'primary' : 'success'"
-            @click="handleVenueFilter(venue)">
-            {{ formatVenue(venue) }}: {{ count }}
-          </el-tag>
-        </template>
+        <el-tag v-for="(count, venue) in venueDistribution" :key="venue" class="statTag"
+          :type="isVenueSelected(venue) ? 'primary' : 'success'" @click="handleVenueFilter(venue)">
+          {{ formatVenue(venue) }}: {{ count }}
+        </el-tag>
       </div>
 
       <!-- 重置筛选

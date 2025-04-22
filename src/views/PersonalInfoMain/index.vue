@@ -15,6 +15,7 @@
         <PersonalWordCloud :authorId="authorId" />
         <!-- <PersonalAuthorStatistic :authorId="authorId" /> -->
         <PersonalSimilarAuthor :authorId="authorId" />
+        <PersonalRecomConference />
       </div>
     </div>
   </div>
@@ -28,6 +29,7 @@ import PersonalWordCloud from './PersonalWordCloud.vue'
 import PersonalSimilarAuthor from './PersonalSimilarAuthor.vue'
 import PersonalCorAuthor from './PersonalCorAuthor.vue'
 import PersonalAuthorStatistic from './PersonalAuthorStatistic.vue'
+import PersonalRecomConference from './PersonalRecomConference.vue'
 
 export default {
   components: {
@@ -37,7 +39,8 @@ export default {
     PersonalWordCloud,
     PersonalAuthorStatistic,
     PersonalSimilarAuthor,
-    PersonalCorAuthor
+    PersonalCorAuthor,
+    PersonalRecomConference
   },
   data() {
     return {

@@ -15,7 +15,8 @@
     </div>
 
     <div class="searchContent">
-      <SearchMainList v-for="authorItem in paginatedAuthors" :key="authorItem.id" :author="authorItem" />
+      <SearchMainList v-for="(authorItem, index) in paginatedAuthors" :key="`${authorItem.id} - ${index}`"
+        :author="authorItem" />
       <el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
         :page-size="pageSize" :total="author.length" layout="total, sizes, prev, pager, next, jumper"
         :page-sizes="[5, 10, 20, 50]" />
@@ -47,20 +48,27 @@ export default {
       }
       let sortedAuthors = [...this.author]
 
-      switch (this.activeName) {
-        case 'second':
-          sortedAuthors.sort((a, b) => b.hindex - a.hindex)
-          break
-        case 'third':
-          sortedAuthors.sort((a, b) => b.ncitation - a.ncitation)
-          break
-        case 'fourth':
-          sortedAuthors.sort((a, b) => b.npubs - a.npubs)
-          break
-        default:
-          break
+      if (this.activeName == 'first') {
+        return sortedAuthors
+      } else if (this.activeName == 'third') {
+        sortedAuthors.sort((a, b) => b.ncitation - a.ncitation)
+        return sortedAuthors
       }
-      return sortedAuthors
+      // switch (this.activeName) {
+      //   case 'first':
+      //     break
+      //   case 'second':
+      //     sortedAuthors.sort((a, b) => b.hindex - a.hindex)
+      //     break
+      //   case 'third':
+      //     sortedAuthors.sort((a, b) => b.ncitation - a.ncitation)
+      //     break
+      //   case 'fourth':
+      //     sortedAuthors.sort((a, b) => b.npubs - a.npubs)
+      //     break
+      //   default:
+      //     break
+      // }
     },
     paginatedAuthors() {
       const start = (this.currentPage - 1) * this.pageSize
@@ -91,9 +99,7 @@ export default {
   border-radius: 15px;
   margin: 0px;
   justify-content: space-between;
-  // box-shadow: 0 0 5px 0 #a8a8a8;
   background-image: linear-gradient(#dff3f9, #ffffff, #ffffff, #ffffff);
-  flex: 4;
 
   .searchMainTab {
     width: 100%;
