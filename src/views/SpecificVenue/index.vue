@@ -88,7 +88,7 @@ export default {
 .venue-page {
   position: relative;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
   
   .animated-background {
@@ -132,7 +132,8 @@ export default {
     z-index: 1;
     padding-top: 30px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
     
     &::before {
       content: '';
