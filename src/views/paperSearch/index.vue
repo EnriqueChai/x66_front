@@ -1,26 +1,28 @@
 <template>
-  <div class="backPage">
-    <SearchHead :searchType="currentView" />
-
-    <div class="content">
-      <div class="switchBtn">
-        <el-button round @click="toggleView('author')">作者</el-button>
-        <el-button round @click="toggleView('paper')">论文</el-button>
-        <el-button round @click="toggleView('conference')">期刊会议</el-button>
+  <div class="searchBackPage">
+    <div class="animated-background" />
+    <div class="content-wrapper">
+      <SearchHead :searchType="currentView" />
+      <div class="content">
+        <!-- 分段切换按钮 -->
+        <div class="switchBtn">
+          <el-button round @click="toggleView('author')" :class="{ active: currentView === 'author' }">作者</el-button>
+          <el-button round @click="toggleView('paper')" :class="{ active: currentView === 'paper' }">论文</el-button>
+          <el-button round @click="toggleView('conference')"
+            :class="{ active: currentView === 'conference' }">期刊会议</el-button>
+        </div>
+        <transition name="fade" mode="out-in">
+          <SearchMain v-if="currentView === 'author'" key="author" />
+          <SearchMainPaper v-if="currentView === 'paper'" key="paper" />
+          <SearchMainConference v-if="currentView === 'conference'" key="conference" />
+        </transition>
       </div>
-
-      <SearchMain v-if="currentView === 'author'" />
-      <SearchMainPaper v-if="currentView === 'paper'" />
-      <SearchMainConference v-if="currentView === 'conference'" />
-
     </div>
-
   </div>
 </template>
 
 <script>
 import SearchHead from './SearchHead.vue'
-import MultiLevelFilter from '@/components/MultiLevelFilter/index.vue'
 import SearchMain from './SearchMain.vue'
 import SearchMainPaper from './SearchMainPaper.vue'
 import SearchMainConference from './SearchMainConference.vue'
@@ -28,7 +30,6 @@ import SearchMainConference from './SearchMainConference.vue'
 export default {
   components: {
     SearchHead,
-    MultiLevelFilter,
     SearchMain,
     SearchMainPaper,
     SearchMainConference
@@ -47,25 +48,152 @@ export default {
 </script>
 
 <style lang="scss">
-.backPage {
-  height: 100vh;
-  background: url(../../assets/bg_dingbu2.png) no-repeat top;
-  padding-top: 29px;
+.searchBackPage {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
 
-  .content {
-    display: flex;
-    flex-direction: column;
-    width: 1300px;
-    margin: 0 auto 30px;
+  .animated-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4eff9 100%);
+    z-index: -1;
 
-    .switchBtn {
-      margin: 0 0 30px 0;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 400px;
+      background: url(../../assets/bg_dingbu.png) no-repeat center top;
+      background-size: cover;
+      z-index: -1;
+      opacity: 0.8;
+      animation: slowFloat 15s infinite alternate ease-in-out;
     }
 
-    .SearchMain {
-      // flex: 4;
-      box-sizing: border-box;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+      z-index: 0;
+      animation: pulse 15s infinite alternate;
     }
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+    padding-top: 29px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.5) 100%);
+    min-height: 100vh;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(224, 236, 255, 0.5) 100%);
+      z-index: -1;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      width: 1300px;
+      max-width: 95%;
+      margin: 0 auto 30px;
+    }
+  }
+}
+
+/* -------- 分段切换器 -------- */
+.switchBtn {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 40px;
+  padding: 4px;
+  margin: 0 auto 30px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  .el-button {
+    background: transparent;
+    border: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 24px;
+    margin: 0;
+    position: relative;
+    transition: color 0.3s;
+
+    &.active {
+      color: #fff;
+    }
+
+    &.active::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 36px;
+      background: linear-gradient(135deg, #2bd7ee 0%, #478fe7 100%);
+      z-index: -1;
+      transition: all 0.3s;
+    }
+
+    &:hover:not(.active) {
+      color: #ff7e5f;
+    }
+  }
+}
+
+/* -------- 过渡动画 -------- */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* -------- 背景动画 keyframes -------- */
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+@keyframes slowFloat {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  100% {
+    transform: translateY(-20px) scale(1.03);
   }
 }
 </style>

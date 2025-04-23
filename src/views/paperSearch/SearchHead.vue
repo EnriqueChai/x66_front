@@ -1,26 +1,34 @@
 <template>
-  <div class="searchHead">
-    <!-- 搜索框 -->
-    <div class="top-left">
-      <div class="inputFrame">
-        <el-input v-model="input" placeholder="请输入内容" />
-        <el-tag v-if="input" @click="clearSearch" v-loading.fullscreen.lock="fullscreenLoading">清空</el-tag>
-      </div>
+  <div class="searchHeadContainer">
+    <!-- 标题 -->
+    <div class="main-title">
+      <div class="title-line">GFMBench</div>
+      <div class="subtitle-line">科技文献分析系统</div>
     </div>
 
-    <!-- 搜索按钮 -->
-    <div class="top-right">
-      <el-button @click="handleSearch">搜索</el-button>
+    <!-- 搜索框整体 -->
+    <div class="recomSearch">
+      <div class="inputFrame">
+        <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." prefix-icon="el-icon-search"
+          @keyup.enter="handleSearch" />
+        <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">
+          清空
+        </el-tag>
+        <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch"
+          v-loading.fullscreen.lock="fullscreenLoading" :disabled="!input.trim()">
+          搜索
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import { getPaper } from '@/api/getPaper'
 import { getAllAuthor } from '@/api/getAllAuthor'
+import { getPaper } from '@/api/getPaper'
 
 export default {
+  name: 'SearchHeadWithTitle',
   props: {
     searchType: {
       type: String,
@@ -34,80 +42,185 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('author', ['setSearchQueryAuthor']),
-    ...mapMutations('paper', ['setSearchQueryPaper']),
-
     async handleSearch() {
-      this.fullscreenLoading = true
-      const res = await getAllAuthor(this.input)
-      const resPaper = await getPaper(this.input)
-      this.fullscreenLoading = false
-      this.$store.commit('author/setAuthor', res)
-      this.$store.commit('paper/setPaper', resPaper)
+      if (!this.input.trim()) return;
+      this.fullscreenLoading = true;
+      try {
+        const res = await getAllAuthor(this.input);
+        const resPaper = await getPaper(this.input);
+        this.$store.commit('author/setAuthor', res);
+        this.$store.commit('paper/setPaper', resPaper);
+      } catch (err) {
+        console.error(err);
+        this.$message.error('搜索失败，请稍后重试');
+      } finally {
+        this.fullscreenLoading = false;
+      }
     },
     clearSearch() {
-      this.input = ''
+      this.input = '';
     }
   }
 }
 </script>
 
 <style lang="scss">
-.searchHead {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+.searchHeadContainer {
   display: flex;
-  width: 1300px;
-  margin: 0 auto 30px;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-  .top-left {
+/* 标题样式 */
+.main-title {
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-out;
+
+  .title-line {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 8px 16px rgba(0, 0, 150, 0.15);
+    animation: titlePulse 2s infinite alternate ease-in-out;
+  }
+
+  .subtitle-line {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-top: 6px;
+    background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInSub 1.5s ease-out;
+  }
+}
+
+/* 搜索框样式 */
+.recomSearch {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  border: 2px solid rgba(92, 178, 235, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 110, 255, 0.15);
+  transition: all 0.3s ease;
+  animation: slideUp 0.8s ease-out backwards;
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 110, 255, 0.2);
+    border-color: rgba(92, 178, 235, 1);
+  }
+
+  .inputFrame {
     display: flex;
-    height: 50px;
-    width: 1100px;
-    box-sizing: border-box;
-    background: rgb(255, 255, 255);
-    border-radius: 15px;
-    border: 2px solid rgb(92, 178, 235);
+    align-items: center;
+    height: 56px;
+    padding: 0 20px;
 
-    .inputFrame {
-      display: flex;
+    .el-input {
       flex: 1;
-      justify-content: space-between;
-      height: 50px;
-      line-height: 50px;
-      align-items: center;
 
       .el-input__inner {
         border: none;
-        font-size: 15px;
-        width: 900px;
-        margin-left: 10px;
+        background: transparent;
+        height: 52px;
+        font-size: 16px;
+        padding-left: 8px;
+
+        &::placeholder {
+          color: #909399;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .clear-tag {
+      margin: 0 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .search-button {
+      height: 46px;
+      padding: 0 20px;
+      border-radius: 23px;
+      font-size: 16px;
+      background: linear-gradient(90deg, #4d98ff, #2579ff);
+      border: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(90deg, #2579ff, #1e6dff);
+        transform: translateY(-1px);
       }
 
-      .el-button {
-        margin-right: 20px;
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-        padding: 0;
-      }
-
-      .el-tag {
-        margin-right: 20px;
-        cursor: pointer;
+      &:active {
+        transform: translateY(1px);
       }
     }
   }
+}
 
-  .top-right {
-    .el-button {
-      height: 50px;
-      width: 170px;
-      border-radius: 15px;
-      // box-shadow: 0 0 10px 0 #5586d7;
-      font-size: 18px;
-      color: white;
-      background: #5586d7;
-    }
+/* 动画定义 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInSub {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titlePulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.02);
   }
 }
 </style>

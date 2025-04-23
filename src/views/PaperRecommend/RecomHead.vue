@@ -5,40 +5,26 @@
         <div class="title-line">GFMBench</div>
         <div class="subtitle-line">科技文献分析系统</div>
       </h1>
-      
+
       <div class="search-section">
         <div class="recomSearch">
           <div class="inputFrame">
-            <el-input 
-              v-model="input" 
-              placeholder="输入关键词搜索文献..."
-              prefix-icon="el-icon-search"
-              @keyup.enter="handleSearch"
-            />
+            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." prefix-icon="el-icon-search"
+              @keyup.enter="handleSearch" />
             <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">清空</el-tag>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
-              class="search-button"
-              @click="handleSearch"
-              v-loading.fullscreen.lock="fullscreenLoading"
-              :disabled="!input.trim()"
-            >
+            <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch"
+              v-loading.fullscreen.lock="fullscreenLoading" :disabled="!input.trim()">
               搜索
             </el-button>
           </div>
         </div>
-        
+
         <div class="search-tip" v-if="!recentlySearched">
           <div class="simple-hot-search">
             <span class="hot-search-label">大家都在搜:</span>
             <div class="hot-search-items">
-              <span 
-                v-for="(tag, index) in hotTags.slice(0, 6)" 
-                :key="index"
-                @click="quickSearch(tag)"
-                class="hot-search-item"
-              >
+              <span v-for="(tag, index) in hotTags.slice(0, 6)" :key="index" @click="quickSearch(tag)"
+                class="hot-search-item">
                 {{ tag }}
               </span>
             </div>
@@ -65,20 +51,20 @@ export default {
   methods: {
     async handleSearch() {
       if (!this.input.trim()) return;
-      
+
       this.fullscreenLoading = true;
       try {
         const res = await getAllAuthor(this.input);
         const resPaper = await getPaper(this.input);
-        
+
         if (res) {
           this.$store.commit('author/setAuthor', res);
         }
-        
+
         if (resPaper) {
           this.$store.commit('paper/setPaper', resPaper);
         }
-        
+
         this.recentlySearched = true;
         this.$router.push({ name: 'searchPage' });
       } catch (error) {
@@ -107,7 +93,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   .header-content {
     max-width: 900px;
     width: 100%;
@@ -121,7 +107,7 @@ export default {
     text-align: center;
     line-height: 1.1;
     animation: fadeIn 1.2s ease-out;
-    
+
     .title-line {
       font-family: 'Poppins', sans-serif;
       font-size: 60px;
@@ -132,7 +118,7 @@ export default {
       text-shadow: 0 10px 20px rgba(0, 0, 150, 0.15);
       animation: titlePulse 2s infinite alternate ease-in-out;
     }
-    
+
     .subtitle-line {
       font-family: 'Noto Sans SC', sans-serif;
       font-size: 32px;
@@ -153,27 +139,27 @@ export default {
     align-items: center;
     margin-bottom: 15px;
   }
-  
+
   .recomSearch {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
     animation: slideUp 0.8s ease-out 0.3s backwards;
   }
-  
+
   .search-tip {
     display: flex;
     margin-top: 14px;
     animation: fadeIn 1s ease-out 0.8s backwards;
     width: 100%;
     max-width: 800px;
-    
+
     .simple-hot-search {
       width: 100%;
       display: flex;
       align-items: center;
       padding: 0 10px;
-      
+
       .hot-search-label {
         font-size: 14px;
         color: #606266;
@@ -181,24 +167,24 @@ export default {
         white-space: nowrap;
         font-weight: 500;
       }
-      
+
       .hot-search-items {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        
+
         .hot-search-item {
           font-size: 13px;
           color: #409EFF;
           cursor: pointer;
           transition: all 0.2s;
           position: relative;
-          
+
           &:hover {
             color: #66b1ff;
             text-decoration: underline;
           }
-          
+
           &:not(:last-child):after {
             content: '';
             position: absolute;
@@ -221,6 +207,7 @@ export default {
     opacity: 0.9;
     transform: scale(1);
   }
+
   100% {
     opacity: 1;
     transform: scale(1.02);
@@ -232,6 +219,7 @@ export default {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 0.85;
     transform: translateY(0);
@@ -243,6 +231,7 @@ export default {
     opacity: 0;
     transform: translateY(30px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -253,6 +242,7 @@ export default {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -268,8 +258,9 @@ export default {
   border: 2px solid rgba(92, 178, 235, 0.8);
   box-shadow: 0 8px 20px rgba(0, 110, 255, 0.15);
   transition: all 0.3s ease;
-  
-  &:hover, &:focus-within {
+
+  &:hover,
+  &:focus-within {
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(0, 110, 255, 0.2);
     border-color: rgba(92, 178, 235, 1);
@@ -286,14 +277,14 @@ export default {
 
     .el-input {
       flex: 1;
-      
+
       .el-input__inner {
         border: none;
         font-size: 16px;
         background: transparent;
         height: 52px;
         padding-left: 8px;
-        
+
         &::placeholder {
           color: #909399;
           font-size: 16px;
@@ -310,12 +301,12 @@ export default {
       border: none;
       margin-left: 10px;
       transition: all 0.3s ease;
-      
+
       &:hover {
         background: linear-gradient(90deg, #2579ff, #1e6dff);
         transform: translateY(-1px);
       }
-      
+
       &:active {
         transform: translateY(1px);
       }
@@ -325,7 +316,7 @@ export default {
       margin-right: 10px;
       cursor: pointer;
       transition: all 0.2s;
-      
+
       &:hover {
         transform: scale(1.05);
       }
