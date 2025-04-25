@@ -26,7 +26,8 @@
 
             <div class="global-modal-section">
               <h3><i class="el-icon-document-copy"></i> 摘要</h3>
-              <p class="global-paper-abstract">{{ currentPaper.summary || currentPaper.abstract || '暂无摘要' }}</p>
+              <p class="global-paper-abstract">{{ currentPaper.summary || currentPaper.abstract ||
+                currentPaper.abstractText|| '暂无摘要' }}</p>
             </div>
 
             <div class="global-modal-section theme-section">
@@ -291,6 +292,7 @@ export default {
 
 .global-modal-header {
   padding: 20px 30px;
+  width: 600px;
   border-bottom: 1px solid #f0f2f5;
 }
 

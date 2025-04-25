@@ -1,31 +1,42 @@
 <template>
-  <div class="searchPaperListContainer" @click="openModal">
-    <!-- 顶部：图标 + 标题 + 推荐标签 -->
-    <div class="searchPaperLsitTop">
-      <svg-icon icon-class="pdf" />
-      <h3 class="clickable-title">{{ formatTitle(paper.title) || '未知标题' }}</h3>
-      <el-tag v-if="paper.rec" class="recommend-tag" type="success" effect="light" size="small">
-        你可能感兴趣
-      </el-tag>
-    </div>
-
-    <!-- 中部：作者列表 + 摘要 -->
-    <div class="searchPaperLsitMid">
-      <div class="authors">
-        <span v-for="(author, idx) in displayedAuthors" :key="idx" class="author-name">
-          {{ author }}<span v-if="idx < displayedAuthors.length - 1">, </span>
-        </span>
-        <span v-if="hasEtAl">, et al.</span>
+  <div class="recomListContainer">
+    <div class="list-content">
+      <!-- 顶部：图标 + 标题 -->
+      <div class="recomListTop">
+        <div class="paper-icon">
+          <svg-icon icon-class="pdf" class="pdf-icon" />
+        </div>
+        <h3 @click="openModal" class="clickable-title">
+          {{ capitalizeTitle(paper.title) || '— 未知标题 —' }}
+        </h3>
       </div>
-      <div class="abstract">{{ formatAbstract(paper.abstractText) }}</div>
-    </div>
-
-    <!-- 底部：引用量 + 期刊+年份 + 研究领域 -->
-    <div class="searchPaperLsitBottom">
-      <div class="bottomLeft">
-        <span class="quote">引用 {{ paper.ncitation || 0 }}</span>
-        <span class="venue-year">{{ formatVenue(paper.venue) }} {{ paper.year || '未知' }}</span>
-        <span v-if="paper.field" class="field">研究领域：{{ formatField(paper.field) }}</span>
+      <!-- 中部：作者 + 信息 + 操作 -->
+      <div class="recomListMid">
+        <div class="authors">
+          <span v-for="(a, i) in displayedAuthors" :key="i" class="author-name">
+            {{ a }}<span v-if="i < displayedAuthors.length - 1">, </span>
+          </span>
+          <span v-if="!displayedAuthors.length" class="author-name">未知作者</span>
+          <span v-if="hasEtAl"> et al.</span>
+        </div>
+        <div class="paper-meta">
+          <span class="meta-item">
+            <i class="el-icon-date"></i> {{ paper.year || '—' }}
+          </span>
+          <span class="meta-item">
+            <i class="el-icon-reading"></i> 引用: {{ paper.ncitation || 0 }}
+          </span>
+          <div class="theme-tags">
+            <el-tag v-for="(t, idx) in themesList" :key="idx" size="mini" effect="plain" type="info" class="theme-tag">
+              {{ t }}
+            </el-tag>
+            <el-tag v-if="!themesList.length" size="mini" effect="plain" type="info" class="theme-tag">
+              未知领域
+            </el-tag>
+          </div>
+          <el-button size="mini" type="primary" plain round icon="el-icon-view" class="view-btn"
+            @click.stop="openModal">查看详情</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -35,208 +46,210 @@
 export default {
   name: 'SearchPaperListItem',
   props: {
-    paper: {
-      type: Object,
-      required: true,
-      default: () => ({})
-    }
+    paper: { type: Object, required: true }
   },
   data() {
     return {
-      // 小词表：在标题和期刊中不强制首字母大写
+      maxLength: 6,
       functionWords: [
         'a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'so', 'yet',
         'at', 'by', 'in', 'of', 'on', 'to', 'up', 'with', 'from', 'into',
         'during', 'including', 'until', 'against', 'among', 'throughout',
         'despite', 'towards', 'upon', 'concerning'
       ],
-      // 常见缩写词保持大写
       specialAcronyms: {
         ieee: 'IEEE',
         acm: 'ACM'
-      },
-      maxLength: 6
+      }
     };
   },
   computed: {
-    // 拆分作者并格式化
     authorsArray() {
-      return this.splitAuthors(this.paper.authors);
+      const a = this.paper.authors;
+      let arr = [];
+      if (typeof a === 'string') {
+        arr = a.split(/[,;，；]/).map(s => s.trim()).filter(Boolean);
+      } else if (Array.isArray(a)) {
+        arr = a;
+      }
+      return arr.map(name => {
+        return name.split(/\s+/)
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+          .join(' ');
+      });
     },
-    // 前 maxLength 个作者
     displayedAuthors() {
       return this.authorsArray.slice(0, this.maxLength);
     },
-    // 是否超过 maxLength
     hasEtAl() {
       return this.authorsArray.length > this.maxLength;
+    },
+    themesList() {
+      const f = this.paper.field;
+      if (Array.isArray(f)) {
+        return f.filter(Boolean);
+      } else if (typeof f === 'string' && f.trim()) {
+        return [f.trim()];
+      }
+      return [];
     }
   },
   methods: {
-    // 统一触发全局模态显示，由 App.vue 监听
+    capitalizeTitle(title) {
+      if (!title || typeof title !== 'string') return '';
+      const words = title.toLowerCase().split(/\s+/);
+      const len = words.length;
+      return words.map((word, idx) => {
+        const lw = word.toLowerCase();
+        if (this.specialAcronyms[lw]) {
+          return this.specialAcronyms[lw];
+        }
+        if (idx !== 0 && idx !== len - 1 && this.functionWords.includes(lw)) {
+          return lw;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }).join(' ');
+    },
     openModal() {
-      this.$bus.$emit('showPaperModal', {
-        // 把 authorsArray 直接替换掉 paper.authors
-        paper: {
-          ...this.paper,
-          authors: this.authorsArray
-        },
-        show: true
-      });
-    },
-
-    // 分割作者字符串 → 数组
-    splitAuthors(authors) {
-      if (Array.isArray(authors)) {
-        return authors.map(a => this.capitalizeName(a));
-      }
-      if (typeof authors === 'string') {
-        return authors
-          .split(/[;,，；]/)
-          .map(a => this.capitalizeName(a.trim()))
-          .filter(a => a);
-      }
-      return [];
-    },
-
-    // 首字母大写，其他小写
-    capitalizeName(name) {
-      return name
-        .split(' ')
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join(' ');
-    },
-
-    // 格式化标题（同理可用于期刊、领域）
-    formatTitle(title) {
-      return this.normalizeCase(title, this.functionWords);
-    },
-
-    formatVenue(venue) {
-      return this.normalizeCase(venue, this.functionWords);
-    },
-
-    formatField(field) {
-      if (Array.isArray(field)) {
-        return field.map(f => this.normalizeCase(f, this.functionWords)).join(', ');
-      }
-      return this.normalizeCase(field, this.functionWords);
-    },
-
-    // 将纯大写或纯小写文本转换为标题式大小写，保留缩写
-    normalizeCase(text = '', smallWords = []) {
-      const t = String(text).trim();
-      if (!t) return '';
-      const isUpper = t === t.toUpperCase();
-      const isLower = t === t.toLowerCase();
-      let words = t.split(/\s+/);
-      if (isUpper || isLower) {
-        words = words.map((w, i) => {
-          const lw = w.toLowerCase();
-          if (this.specialAcronyms[lw]) {
-            return this.specialAcronyms[lw];
-          }
-          if (smallWords.includes(lw) && i > 0 && i < words.length - 1) {
-            return lw;
-          }
-          return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
-        });
-        return words.join(' ');
-      }
-      return t;
-    },
-
-    // 摘要直接返回或提示
-    formatAbstract(abstract) {
-      const a = String(abstract || '').trim();
-      return a ? a : '暂无摘要信息。';
+      const modalPaper = { ...this.paper, authors: this.authorsArray };
+      this.$bus.$emit('showPaperModal', { paper: modalPaper, show: true });
     }
   }
 };
 </script>
 
-<style lang="scss">
-.searchPaperListContainer {
+<style scoped lang="scss">
+.recomListContainer {
   display: flex;
   flex-direction: column;
   padding: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  transition: box-shadow 0.3s;
+}
+
+.recomListContainer:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recomListTop {
+  display: flex;
+  align-items: flex-start;
+}
+
+.recomListTop .paper-icon {
+  margin: 4px 12px 0 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9a9e 0%, #f56c6c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(245, 108, 108, 0.2);
+}
+
+.recomListTop .pdf-icon {
+  font-size: 16px;
+  color: #fff;
+}
+
+.clickable-title {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #2c3e50;
   cursor: pointer;
-  transition: background 0.2s;
+}
 
-  &:hover {
-    background: #fafafa;
-  }
+.clickable-title:hover {
+  color: #3498db;
+}
 
-  .searchPaperLsitTop {
-    display: flex;
-    align-items: center;
+.recomListMid {
+  display: flex;
+  flex-direction: column;
+  padding-left: 32px;
+  gap: 8px;
+}
 
-    svg-icon {
-      font-size: 20px;
-      color: #f56c6c;
-    }
+.authors {
+  font-size: 14px;
+  color: #7f8c8d;
+}
 
-    .clickable-title {
-      margin: 0 12px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.author-name {
+  color: #3498db;
+  transition: color 0.2s;
+}
 
-    .recommend-tag {
-      margin-left: auto;
-    }
-  }
+.author-name:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
 
-  .searchPaperLsitMid {
-    margin-top: 8px;
+.paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
 
-    .authors {
-      font-size: 14px;
-      color: #555;
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #95a5a6;
+}
 
-      .author-name {
-        color: #007acc;
-      }
-    }
+.meta-item i {
+  margin-right: 4px;
+}
 
-    .abstract {
-      margin-top: 6px;
-      font-size: 14px;
-      color: #666;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  }
+.meta-item .el-icon-date {
+  color: #3498db;
+}
 
-  .searchPaperLsitBottom {
-    margin-top: 10px;
+.meta-item .el-icon-reading {
+  color: #f39c12;
+}
 
-    .bottomLeft {
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      color: #777;
+.theme-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
-      .quote {
-        color: #ac6df4;
-        margin-right: 12px;
-      }
+.theme-tag {
+  font-size: 12px;
+  padding: 0 6px;
+  height: 22px;
+  line-height: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2c3e50;
+  border: none;
+}
 
-      .venue-year {
-        margin-right: 12px;
-      }
+.view-btn {
+  margin-left: auto;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+  border: none;
+  color: #fff;
+}
 
-      .field {
-        color: #e98372;
-      }
-    }
-  }
+.view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 123, 255, 0.3);
+  background: linear-gradient(135deg, #00b5e9 0%, #0052d6 100%);
 }
 </style>

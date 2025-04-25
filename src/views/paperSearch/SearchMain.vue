@@ -69,7 +69,6 @@ export default {
 .searchMainContainer {
   box-sizing: border-box;
   background: #fff;
-  background-image: #fff;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   padding: 20px;
