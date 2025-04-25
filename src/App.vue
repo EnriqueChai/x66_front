@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <router-view/>
-    
+    <router-view />
+
     <!-- 全局论文详情模态框 -->
     <div v-if="showPaperModal" class="global-modal-overlay" @click.self="closePaperModal">
       <transition name="global-modal-fade">
         <div v-if="showPaperModalContent" class="global-modal-content">
           <button class="global-close-button" @click="closePaperModal">×</button>
           <div class="global-modal-header">
-            <h2>{{ currentPaper.title || '未知标题' }}</h2>
+            <h2>{{ formatTitle(currentPaper.title) || '未知标题' }}</h2>
           </div>
           <div class="global-modal-body">
             <div class="global-modal-section">
@@ -23,35 +23,26 @@
                 <span v-else>未知作者</span>
               </p>
             </div>
-            
+
             <div class="global-modal-section">
               <h3><i class="el-icon-document-copy"></i> 摘要</h3>
               <p class="global-paper-abstract">{{ currentPaper.summary || currentPaper.abstract || '暂无摘要' }}</p>
             </div>
-            
+
             <div class="global-modal-section theme-section">
               <h3><i class="el-icon-collection-tag"></i> 主题标签</h3>
               <div class="global-themes-container">
                 <template v-if="currentPaper.themes && currentPaper.themes.length > 0">
-                  <el-tag 
-                    v-for="(theme, i) in currentPaper.themes" 
-                    :key="i" 
-                    effect="dark" 
-                    class="global-theme-tag"
-                  >
+                  <el-tag v-for="(theme, i) in currentPaper.themes" :key="i" effect="dark" class="global-theme-tag">
                     {{ theme }}
                   </el-tag>
                 </template>
-                <el-tag 
-                  v-else
-                  effect="dark" 
-                  class="global-theme-tag"
-                >
+                <el-tag v-else effect="dark" class="global-theme-tag">
                   未知主题
                 </el-tag>
               </div>
             </div>
-            
+
             <div class="global-modal-section global-modal-info">
               <div class="global-info-item">
                 <i class="el-icon-date"></i>
@@ -60,7 +51,7 @@
                   <p>{{ formatYear(currentPaper.time || currentPaper.year) }}</p>
                 </div>
               </div>
-              
+
               <div class="global-info-item">
                 <i class="el-icon-reading"></i>
                 <div>
@@ -70,7 +61,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="global-modal-footer">
             <el-button type="primary" icon="el-icon-download" round @click="downloadPdf">
               下载 PDF
@@ -100,6 +91,16 @@ export default {
         citations: 0,
         pdfUrl: '',
         themes: []
+      },
+      functionWords: [
+        'a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'so', 'yet',
+        'at', 'by', 'in', 'of', 'on', 'to', 'up', 'with', 'from', 'into',
+        'during', 'including', 'until', 'against', 'among', 'throughout',
+        'despite', 'towards', 'upon', 'concerning'
+      ],
+      specialAcronyms: {
+        ieee: 'IEEE',
+        acm: 'ACM'
       }
     }
   },
@@ -110,31 +111,31 @@ export default {
     },
     formatYear(timeStr) {
       if (!timeStr) return '未知日期';
-      
+
       // 处理日期的多种可能情况
       const timeValue = String(timeStr);
-      
+
       // 1. 如果是完整的日期字符串（如 "2023-01-15"）
       if (/^\d{4}-\d{2}-\d{2}$/.test(timeValue)) {
         return timeValue;
       }
-      
+
       // 2. 如果是带时间的日期字符串（如 "2023-01-15 12:00:00"）
       if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/.test(timeValue)) {
         return timeValue.split(' ')[0];
       }
-      
+
       // 3. 如果是纯数字且是4位，直接作为年份
       if (/^\d{4}$/.test(timeValue)) return timeValue;
-      
+
       // 4. 尝试从时间字符串中提取完整日期
       const dateMatch = timeValue.match(/\d{4}-\d{2}-\d{2}/);
       if (dateMatch) return dateMatch[0];
-      
+
       // 5. 尝试匹配任何形式的4位数年份
       const yearMatch = timeValue.match(/\b(19|20)\d{2}\b/);
       if (yearMatch) return yearMatch[0];
-      
+
       // 都无法匹配则返回未知日期
       return '未知日期';
     },
@@ -142,7 +143,7 @@ export default {
       this.currentPaper = paper;
       this.showPaperModal = true;
       document.body.style.overflow = 'hidden';
-      
+
       // 使用requestAnimationFrame确保DOM更新后再添加动画类
       requestAnimationFrame(() => {
         const overlay = document.querySelector('.global-modal-overlay');
@@ -180,7 +181,27 @@ export default {
       if (event.key === 'Escape' && this.showPaperModal) {
         this.closePaperModal();
       }
-    }
+    },
+    normalizeCase(text = '', smallWords = []) {
+      const t = String(text).trim();
+      if (!t) return '';
+      const isUpper = t === t.toUpperCase();
+      const isLower = t === t.toLowerCase();
+      let words = t.split(/\s+/);
+      if (isUpper || isLower) {
+        words = words.map((w, i) => {
+          const lw = w.toLowerCase();
+          if (this.specialAcronyms[lw]) return this.specialAcronyms[lw];
+          if (smallWords.includes(lw) && i > 0 && i < words.length - 1) return lw;
+          return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+        });
+        return words.join(' ');
+      }
+      return t;
+    },
+    formatTitle(title) {
+      return this.normalizeCase(title, this.functionWords);
+    },
   },
   mounted() {
     // 监听全局事件
@@ -191,7 +212,7 @@ export default {
         this.closePaperModal();
       }
     });
-    
+
     // 添加键盘事件
     window.addEventListener('keydown', this.handleKeyDown);
   },
@@ -222,7 +243,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* 降低z-index，确保在提示消息之下 */
+  z-index: 2000;
+  /* 降低z-index，确保在提示消息之下 */
   backdrop-filter: blur(3px);
   opacity: 0;
   transition: opacity 0.3s ease;

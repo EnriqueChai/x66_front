@@ -38,20 +38,6 @@
           <!-- 研究领域: {{ author.biography }} -->
         </div>
       </div>
-      <div class="listRightBottom">
-        <div class="botLeft">
-          <!-- <svg-icon icon-class="eye" />
-          2959 -->
-        </div>
-        <div class="botRight">
-          <!-- <ul>
-            <li><a href="#"><svg-icon icon-class="zxdt" /> 最新动态</a></li>
-            <li><a href="#"><svg-icon icon-class="dbcg" /> 代表成果</a></li>
-            <li><a href="#"><svg-icon icon-class="xtyx" /> 星探一下</a></li>
-            <li><a href="#"><svg-icon icon-class="xszz" /> 相似作者</a></li>
-          </ul> -->
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -177,6 +163,7 @@ export default {
     .midTop {
       display: -webkit-box;
       -webkit-box-orient: vertical;
+      height: 30px;
       -webkit-line-clamp: 1;
       overflow: hidden;
       word-wrap: break-word;

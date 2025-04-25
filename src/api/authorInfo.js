@@ -9,14 +9,6 @@ export const getAuthorInfo = (id) => {
   })
 }
 
-// export const getAuthorPaper = (id) => {
-//   return request.get('book/findPapersById', {
-//     params: {
-//       id
-//     }
-//   })
-// }
-
 export const getAuthorPaper = (authorId, modelId = null) => {
   // 构建请求参数
   const params = { id: authorId };
@@ -30,14 +22,6 @@ export const getAuthorPaper = (authorId, modelId = null) => {
   });
 }
 
-// export const getSimAuthor = (id) => {
-//   return request.get('book/findSimilarAuthorsById', {
-//     params: {
-//       id
-//     }
-//   })
-// }
-
 export const getSimAuthor = (authorId, modelId = null) => {
   // 构建请求参数
   const params = { id: authorId };
@@ -50,3 +34,4 @@ export const getSimAuthor = (authorId, modelId = null) => {
     params
   });
 }
+
