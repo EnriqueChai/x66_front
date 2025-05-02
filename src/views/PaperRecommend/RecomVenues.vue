@@ -30,7 +30,7 @@
             <span class="stat-value">{{ venue.metrics.h5_index }}</span>
           </div>
           <div class="venue-detail-btn">
-            <el-button type="text" size="mini">
+            <el-button type="text" size="mini" @click="goToVenueDetail(venue)">
               <i class="el-icon-info"></i> 详情
             </el-button>
           </div>
@@ -91,6 +91,16 @@ export default {
     this.localVenues = this.generateSampleData();
   },
   methods: {
+    goToVenueDetail(venue) {
+      this.$router.push({
+        path: '/specificVenue',
+        query: {
+          id: venue.id,
+          name: venue.full_name,
+          shortName: venue.short_name
+        }
+      });
+    },
     generateSampleData() {
       const venues = [
         {

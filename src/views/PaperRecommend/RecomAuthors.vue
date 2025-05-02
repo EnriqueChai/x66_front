@@ -24,7 +24,7 @@
             <span class="citation-label">引用</span>
           </div>
           <div class="author-detail-btn">
-            <el-button type="text" size="mini">
+            <el-button type="text" size="mini" @click="goToAuthorDetail(author)">
               <i class="el-icon-info"></i> 详情
             </el-button>
           </div>
@@ -53,6 +53,17 @@ export default {
     this.localAuthors = this.generateSampleData();
   },
   methods: {
+    goToAuthorDetail(author) {
+      this.$router.push({
+        path: '/specificAuthor',
+        query: {
+          id: author.id,
+          name: author.name,
+          affiliation: author.affiliation,
+          fields: author.fields.join(',')
+        }
+      });
+    },
     generateSampleData() {
       return [
         { 
