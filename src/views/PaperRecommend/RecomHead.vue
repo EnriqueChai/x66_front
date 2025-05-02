@@ -9,8 +9,8 @@
       <div class="search-section">
         <div class="recomSearch">
           <div class="inputFrame">
-            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." prefix-icon="el-icon-search"
-              @keyup.enter="handleSearch" />
+            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." 
+              @keyup.enter="handleSearch" clearable />
             <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">清空</el-tag>
             <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch"
               v-loading.fullscreen.lock="fullscreenLoading" :disabled="!input.trim()">
@@ -277,6 +277,11 @@ export default {
 
     .el-input {
       flex: 1;
+
+      /* 隐藏清除按钮 */
+      .el-input__suffix {
+        display: none;
+      }
 
       .el-input__inner {
         border: none;
