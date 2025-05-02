@@ -5,6 +5,7 @@ import author from './modules/author'
 import getters from './getters'
 import paper from './modules/paper'
 import recomPaper from './modules/recomPaper'
+import search from './modules/search'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     authorInfo,
     author,
     paper,
-    recomPaper
+    recomPaper,
+    search
   }
 })

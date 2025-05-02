@@ -3,6 +3,16 @@
     <div class="animated-background" />
     <div class="content-wrapper">
       <SearchHead :searchType="currentView" />
+      <div class="translate-tip" v-if="hasTranslation">
+        <el-alert
+          type="info"
+          :closable="false"
+          show-icon>
+          <div class="translate-tip-content">
+            <span>已将中文搜索词 "<strong>{{ originalTerm }}</strong>" 翻译为 "<strong>{{ translatedTerm }}</strong>" 进行搜索</span>
+          </div>
+        </el-alert>
+      </div>
       <div class="content">
         <!-- 分段切换按钮 -->
         <div class="switchBtn">
@@ -22,6 +32,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import SearchHead from './SearchHead.vue'
 import SearchMain from './SearchMain.vue'
 import SearchMainPaper from './SearchMainPaper.vue'
@@ -38,6 +49,19 @@ export default {
     return {
       currentView: 'author'
     };
+  },
+  computed: {
+    ...mapGetters('search', [
+      'getOriginalTerm',
+      'getTranslatedTerm',
+      'hasTranslation'
+    ]),
+    originalTerm() {
+      return this.getOriginalTerm;
+    },
+    translatedTerm() {
+      return this.getTranslatedTerm;
+    }
   },
   methods: {
     toggleView(view) {
@@ -113,6 +137,26 @@ export default {
       width: 1300px;
       max-width: 95%;
       margin: 0 auto 30px;
+    }
+  }
+
+  .translate-tip {
+    max-width: 900px;
+    margin: 0 auto 15px;
+    padding: 0 20px;
+    
+    .translate-tip-content {
+      font-size: 14px;
+      
+      strong {
+        font-weight: 600;
+        color: #409EFF;
+      }
+    }
+    
+    .el-alert {
+      padding: 10px 16px;
+      border-radius: 8px;
     }
   }
 }

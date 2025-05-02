@@ -38,6 +38,7 @@
 <script>
 import { getAllAuthor } from '@/api/getAllAuthor'
 import { getPaper } from '@/api/getPaper'
+import { isChinese, translateToEnglish } from '@/utils/translate'
 
 export default {
   data() {
@@ -45,7 +46,8 @@ export default {
       input: '',
       fullscreenLoading: false,
       hotTags: ['人工智能', '机器学习', '大语言模型', '图神经网络', '知识图谱', '强化学习'],
-      recentlySearched: false
+      recentlySearched: false,
+      originalInput: ''
     }
   },
   methods: {
@@ -54,8 +56,17 @@ export default {
 
       this.fullscreenLoading = true;
       try {
-        const res = await getAllAuthor(this.input);
-        const resPaper = await getPaper(this.input);
+        this.originalInput = this.input;
+        
+        let searchTerm = this.input;
+        if (isChinese(searchTerm)) {
+          const translatedTerm = translateToEnglish(searchTerm);
+          console.log(`翻译结果: ${searchTerm} -> ${translatedTerm}`);
+          searchTerm = translatedTerm;
+        }
+        
+        const res = await getAllAuthor(searchTerm);
+        const resPaper = await getPaper(searchTerm);
 
         if (res) {
           this.$store.commit('author/setAuthor', res);
@@ -63,6 +74,13 @@ export default {
 
         if (resPaper) {
           this.$store.commit('paper/setPaper', resPaper);
+        }
+        
+        if (this.originalInput !== searchTerm) {
+          this.$store.commit('search/setSearchTerms', {
+            original: this.originalInput,
+            translated: searchTerm
+          });
         }
 
         this.recentlySearched = true;
@@ -76,6 +94,7 @@ export default {
     },
     clearSearch() {
       this.input = '';
+      this.originalInput = '';
     },
     quickSearch(tag) {
       this.input = tag;

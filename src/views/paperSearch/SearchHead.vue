@@ -26,6 +26,7 @@
 <script>
 import { getAllAuthor } from '@/api/getAllAuthor'
 import { getPaper } from '@/api/getPaper'
+import { isChinese, translateToEnglish } from '@/utils/translate'
 
 export default {
   name: 'SearchHeadWithTitle',
@@ -38,18 +39,37 @@ export default {
   data() {
     return {
       input: '',
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      originalInput: ''
     }
   },
   methods: {
     async handleSearch() {
       if (!this.input.trim()) return;
       this.fullscreenLoading = true;
+      
       try {
-        const res = await getAllAuthor(this.input);
-        const resPaper = await getPaper(this.input);
+        this.originalInput = this.input;
+        
+        let searchTerm = this.input;
+        if (isChinese(searchTerm)) {
+          const translatedTerm = translateToEnglish(searchTerm);
+          console.log(`翻译结果: ${searchTerm} -> ${translatedTerm}`);
+          searchTerm = translatedTerm;
+        }
+        
+        const res = await getAllAuthor(searchTerm);
+        const resPaper = await getPaper(searchTerm);
+        
         this.$store.commit('author/setAuthor', res);
         this.$store.commit('paper/setPaper', resPaper);
+        
+        if (this.originalInput !== searchTerm) {
+          this.$store.commit('search/setSearchTerms', {
+            original: this.originalInput,
+            translated: searchTerm
+          });
+        }
       } catch (err) {
         console.error(err);
         this.$message.error('搜索失败，请稍后重试');
@@ -59,6 +79,7 @@ export default {
     },
     clearSearch() {
       this.input = '';
+      this.originalInput = '';
     }
   }
 }
