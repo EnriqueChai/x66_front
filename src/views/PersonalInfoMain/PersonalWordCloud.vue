@@ -175,18 +175,54 @@ export default {
 <style lang="scss">
 .firstSide {
   box-sizing: border-box;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 15px;
-  margin: 0 0 30px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  height: 450px;
+  animation: fadeIn 1s ease-out;
 
   h3 {
-    margin-left: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .wordCloud {
-    height: 350px;
+    height: 380px;
     width: 100%;
+    transition: all 0.3s ease;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .firstSide {
+    padding: 15px;
+    min-height: 300px;
+
+    .wordCloud {
+      height: 250px;
+    }
   }
 }
 </style>

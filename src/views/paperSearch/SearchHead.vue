@@ -27,6 +27,7 @@
 import { getAllAuthor } from '@/api/getAllAuthor'
 import { getPaper } from '@/api/getPaper'
 import { isChinese, translateToEnglish } from '@/utils/translate'
+import { getVenue } from '@/api/getVenue'
 
 export default {
   name: 'SearchHeadWithTitle',
@@ -47,23 +48,25 @@ export default {
     async handleSearch() {
       if (!this.input.trim()) return;
       this.fullscreenLoading = true;
-      
+
       try {
         this.originalInput = this.input;
-        
+
         let searchTerm = this.input;
         if (isChinese(searchTerm)) {
           const translatedTerm = translateToEnglish(searchTerm);
           console.log(`翻译结果: ${searchTerm} -> ${translatedTerm}`);
           searchTerm = translatedTerm;
         }
-        
+
         const res = await getAllAuthor(searchTerm);
         const resPaper = await getPaper(searchTerm);
-        
+        const resVenue = await getVenue(searchTerm);
+
         this.$store.commit('author/setAuthor', res);
         this.$store.commit('paper/setPaper', resPaper);
-        
+        this.$store.commit('venue/setVenue', resVenue);
+
         if (this.originalInput !== searchTerm) {
           this.$store.commit('search/setSearchTerms', {
             original: this.originalInput,

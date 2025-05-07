@@ -10,12 +10,32 @@
 </template>
 
 <script>
+import { getRecommendVenue } from '@/api/authorInfo'
+
 export default {
   data() {
     return {
       loading: false,
-      conferences: ['NeurIPS', 'ICML', 'CVPR', 'ACL', 'KDD', 'AAAI', 'EMNLP', 'NeurIPS',
-        'ICML', 'CVPR', 'ACL', 'KDD', 'AAAI', 'EMNLP']
+      // conferences: ['NeurIPS', 'ICML', 'CVPR', 'ACL', 'KDD', 'AAAI', 'EMNLP', 'NeurIPS',
+      //   'ICML', 'CVPR', 'ACL', 'KDD', 'AAAI', 'EMNLP']
+      conferences: []
+    }
+  },
+  created() {
+    this.fetchConferences();
+  },
+  methods: {
+    async fetchConferences() {
+      this.loading = true;
+      try {
+        const res = await getRecommendVenue();
+        this.conferences = res.data || [];
+        console.log(res)
+      } catch (error) {
+        console.error('获取推荐会议失败', error);
+      } finally {
+        this.loading = false;
+      }
     }
   }
 }
@@ -23,37 +43,37 @@ export default {
 
 <style lang="scss" scoped>
 .forthSide {
-  height: 450px;
   box-sizing: border-box;
-  background: #ffffff;
-  border-radius: 15px;
-  margin: 0 0 30px 15px;
-  width: 305px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 18px 15px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  height: 450px;
 
   h3 {
+    font-family: 'Noto Sans SC', sans-serif;
     font-size: 18px;
     font-weight: 600;
-    margin: 0 0 12px 0;
-    color: #333;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .conferenceList {
-    max-height: 370px;
+    max-height: 380px;
     overflow-y: auto;
     padding-right: 5px;
-    padding-top: 13px;
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE 10+ */
 
     &::-webkit-scrollbar {
       display: none;
-      /* Chrome, Safari */
     }
-
 
     .conferenceItem {
       background-color: #f5f7fa;
@@ -69,11 +89,6 @@ export default {
         background-color: #e0ebff;
         color: #1a73e8;
       }
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(0, 0, 0, 0.1);
-      border-radius: 3px;
     }
   }
 }

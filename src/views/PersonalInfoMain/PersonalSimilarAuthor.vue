@@ -72,19 +72,25 @@ export default {
 
 <style lang="scss">
 .thirdSide {
-  // flex: 4;
-  height: 450px;
   box-sizing: border-box;
-  background: rgb(255, 255, 255);
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin: 0 0 30px 15px;
-  width: 305px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  height: 450px;
 
   h3 {
-    margin-left: 13px;
-    margin-top: 0px;
-    padding-top: 18px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .authorGrid {
@@ -92,9 +98,8 @@ export default {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     justify-items: center;
-    margin-top: 35px;
-
-    max-height: 330px;
+    margin-top: 20px;
+    max-height: 380px;
     overflow-y: auto;
     overflow-x: hidden;
 

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import request_temp from '@/utils/request_temp'
 
 // 获取作者信息
 export const getAuthorInfo = (id) => {
@@ -35,3 +36,10 @@ export const getSimAuthor = (authorId, modelId = null) => {
   });
 }
 
+export const getRecommendVenue = (authorId) => {
+  return request_temp.get('api/author/recommend_venues', {
+    params: {
+      authorId
+    }
+  })
+}

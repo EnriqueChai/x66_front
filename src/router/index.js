@@ -45,6 +45,11 @@ const routes = [
     path: '/specificVenue',
     name: 'specificVenue',
     component: () => import('@/views/SpecificVenue/index')
+  },
+  {
+    path: '/field/:id',
+    name: 'fieldProfile',
+    component: () => import('@/views/FieldProfile/FieldProfile.vue'),
   }
 ]
 

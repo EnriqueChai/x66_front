@@ -37,6 +37,7 @@ export default {
   computed: {
     ...mapState('author', ['author', 'searchQuery']),
     sortedAuthors() {
+      console.log(this.author)
       if (!Array.isArray(this.author)) return []
       const sorted = [...this.author]
       if (this.activeName === 'third') {

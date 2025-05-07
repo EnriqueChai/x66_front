@@ -1,24 +1,46 @@
 <template>
-  <div class="firstTab" v-loading="loading">
-    <div class="firstTab-top">
+  <div class="venue-tabs" v-loading="loading">
+    <div class="tabs-container">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="个人简介" name="first" />
-        <el-tab-pane label="教育背景" name="second" />
-        <el-tab-pane label="兴趣领域" name="third" />
-        <!-- <el-tab-pane label="奖项" name="fourth" />  -->
+        <el-tab-pane name="first">
+          <template #label>
+            <span class="tab-label">
+              <i class="el-icon-info"></i>
+              个人简介
+            </span>
+          </template>
+        </el-tab-pane>
+        <el-tab-pane name="second">
+          <template #label>
+            <span class="tab-label">
+              <i class="el-icon-school"></i>
+              教育背景
+            </span>
+          </template>
+        </el-tab-pane>
+        <el-tab-pane name="third">
+          <template #label>
+            <span class="tab-label">
+              <i class="el-icon-star-off"></i>
+              兴趣领域
+            </span>
+          </template>
+        </el-tab-pane>
       </el-tabs>
-
-      <!-- <p class="firstTab-right" type="primary" :underline="false">
-        <span style="color: #9ca2ac">浏览量 335</span>
-        <a style="border: none;"><svg-icon icon-class="map" /> 职业迁徙</a>
-      </p> -->
     </div>
 
-    <div class="content">
-      <div v-if="activeName === 'first'" class="content-first">{{ authorBio }}</div>
-      <div v-if="activeName === 'second'" class="content-first">{{ strippedAuthorAdu }}</div>
-      <div v-if="activeName === 'third'" class="content-first">{{ authorInterests }}</div>
-      <!-- <div v-if="activeName === 'fourth'">fourth</div> -->
+    <div class="tab-content">
+      <transition name="fade" mode="out-in">
+        <div v-if="activeName === 'first'" key="first" class="content-panel bio">
+          <p>{{ authorBio || "暂无简介" }}</p>
+        </div>
+        <div v-else-if="activeName === 'second'" key="second" class="content-panel bio">
+          <p>{{ strippedAuthorAdu || "暂无教育背景" }}</p>
+        </div>
+        <div v-else-if="activeName === 'third'" key="third" class="content-panel bio">
+          <p>{{ authorInterests || "暂无兴趣领域" }}</p>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -83,71 +105,115 @@ export default {
 </script>
 
 <style lang="scss">
-.firstTab {
+.venue-tabs {
   box-sizing: border-box;
-  margin: 0 auto 30px;
-  padding: 0 20px 0 20px;
-  width: 1300px;
-  height: 175px;
-  display: flex;
-  flex-direction: column;
-  background: rgb(255, 255, 255);
-  border-radius: 15px;
-  // box-shadow: 0 0 10px 0 #a8a8a8;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  width: 100%;
 
-  .firstTab-top {
+  @media (max-width: 1400px) {
+    width: calc(100% - 370px);
+  }
+
+  @media (max-width: 1024px) {
     width: 100%;
-    height: 50px;
-    align-content: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    // align-items: center;
-    border-bottom: 2px solid #E4E7ED;
+  }
 
-    .firstTab-right {
-      width: 300px;
-      height: 50px;
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      font-size: 16px;
-      margin: 0;
+  .tabs-container {
+    .el-tabs {
+      .el-tabs__header {
+        margin: 0;
+        padding: 0 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4eff9 100%);
+        border-bottom: 1px solid #e4e7ed;
+      }
 
-      span,
-      a {
+      .el-tabs__nav-wrap::after {
+        height: 1px;
+        background: #e0e6ed;
+      }
+
+      .el-tabs__item {
+        height: 54px;
+        line-height: 54px;
         font-size: 16px;
-        margin-left: 20px;
+        color: #7f8c8d;
+        transition: all 0.3s;
+        padding: 0 20px;
+
+        i {
+          margin-right: 6px;
+          font-size: 18px;
+          vertical-align: middle;
+
+          &.el-icon-info {
+            color: #3498db;
+          }
+
+          &.el-icon-school {
+            color: #9b59b6;
+          }
+
+          &.el-icon-star-off {
+            color: #f39c12;
+          }
+        }
+
+        &.is-active {
+          font-weight: bold;
+          color: #3498db;
+          transform: translateY(-2px);
+        }
+
+        &:hover {
+          color: #3498db;
+        }
+      }
+
+      .el-tabs__active-bar {
+        background: linear-gradient(90deg, #00c6fb, #005bea);
+        height: 3px;
+      }
+    }
+
+    .tab-label {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+    }
+  }
+
+  .tab-content {
+    padding: 24px 30px;
+    background: white;
+
+    .content-panel {
+      line-height: 1.6;
+      color: #606266;
+
+      p {
+        margin: 0;
+        font-size: 15px;
+        text-align: justify;
+        white-space: pre-wrap;
       }
     }
   }
 
-  .content {
-    width: 1260px;
-
-    .content-first {
-      margin-top: 10px;
-      width: 1260px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      white-space: pre-wrap;
-      -webkit-line-clamp: 5;
-      /* 限制显示6行 */
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
-  .el-tabs {
-    width: 1300px;
-    padding-left: 15px;
-    text-align: center;
-
-    .el-tabs__item {
-      height: 50px !important;
-      line-height: 50px;
-      font-size: 16px;
-    }
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 </style>

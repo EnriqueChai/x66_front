@@ -9,8 +9,7 @@
       <div class="search-section">
         <div class="recomSearch">
           <div class="inputFrame">
-            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." 
-              @keyup.enter="handleSearch" clearable />
+            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." @keyup.enter="handleSearch" clearable />
             <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">清空</el-tag>
             <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch"
               v-loading.fullscreen.lock="fullscreenLoading" :disabled="!input.trim()">
@@ -39,6 +38,7 @@
 import { getAllAuthor } from '@/api/getAllAuthor'
 import { getPaper } from '@/api/getPaper'
 import { isChinese, translateToEnglish } from '@/utils/translate'
+import { getVenue } from '@/api/getVenue'
 
 export default {
   data() {
@@ -57,17 +57,17 @@ export default {
       this.fullscreenLoading = true;
       try {
         this.originalInput = this.input;
-        
+
         let searchTerm = this.input;
         if (isChinese(searchTerm)) {
           const translatedTerm = translateToEnglish(searchTerm);
           console.log(`翻译结果: ${searchTerm} -> ${translatedTerm}`);
           searchTerm = translatedTerm;
         }
-        
         const res = await getAllAuthor(searchTerm);
         const resPaper = await getPaper(searchTerm);
-
+        const resVenue = await getVenue(searchTerm);
+        console.log(resVenue);
         if (res) {
           this.$store.commit('author/setAuthor', res);
         }
@@ -75,12 +75,16 @@ export default {
         if (resPaper) {
           this.$store.commit('paper/setPaper', resPaper);
         }
-        
+
         if (this.originalInput !== searchTerm) {
           this.$store.commit('search/setSearchTerms', {
             original: this.originalInput,
             translated: searchTerm
           });
+        }
+
+        if (resVenue) {
+          this.$store.commit('venue/setVenue', resVenue);
         }
 
         this.recentlySearched = true;

@@ -27,19 +27,19 @@
             <div class="global-modal-section">
               <h3><i class="el-icon-document-copy"></i> 摘要</h3>
               <p class="global-paper-abstract">{{ currentPaper.summary || currentPaper.abstract ||
-                currentPaper.abstractText|| '暂无摘要' }}</p>
+                currentPaper.abstractText || '暂无摘要' }}</p>
             </div>
 
             <div class="global-modal-section theme-section">
-              <h3><i class="el-icon-collection-tag"></i> 主题标签</h3>
+              <h3><i class="el-icon-collection-tag"></i> 研究领域</h3>
               <div class="global-themes-container">
-                <template v-if="currentPaper.themes && currentPaper.themes.length > 0">
-                  <el-tag v-for="(theme, i) in currentPaper.themes" :key="i" effect="dark" class="global-theme-tag">
-                    {{ theme }}
+                <template v-if="currentPaper.field">
+                  <el-tag effect="dark" class="global-theme-tag" :type="getFieldTagType(currentPaper.field)">
+                    {{ formatFieldName(currentPaper.field) }}
                   </el-tag>
                 </template>
                 <el-tag v-else effect="dark" class="global-theme-tag">
-                  未知主题
+                  未知领域
                 </el-tag>
               </div>
             </div>
@@ -203,6 +203,64 @@ export default {
     formatTitle(title) {
       return this.normalizeCase(title, this.functionWords);
     },
+    formatFieldName(field) {
+      if (!field) return ''
+      // 处理常见的领域名称
+      const fieldMap = {
+        'computer science': '计算机科学',
+        'artificial intelligence': '人工智能',
+        'machine learning': '机器学习',
+        'natural language processing': '自然语言处理',
+        'computer vision': '计算机视觉',
+        'data mining': '数据挖掘',
+        'information retrieval': '信息检索',
+        'software engineering': '软件工程',
+        'computer networks': '计算机网络',
+        'computer security': '计算机安全',
+        'database systems': '数据库系统',
+        'human computer interaction': '人机交互',
+        'computer graphics': '计算机图形学',
+        'computer architecture': '计算机体系结构',
+        'operating systems': '操作系统',
+        'programming languages': '编程语言',
+        'theoretical computer science': '理论计算机科学',
+        'computational biology': '计算生物学',
+        'computational chemistry': '计算化学',
+        'computational physics': '计算物理学'
+      }
+
+      const lowerField = field.toLowerCase()
+      return fieldMap[lowerField] || field
+    },
+    getFieldTagType(field) {
+      if (!field) return ''
+      // 根据领域返回不同的标签类型
+      const fieldTypes = {
+        'computer science': 'info',
+        'artificial intelligence': 'success',
+        'machine learning': 'warning',
+        'natural language processing': 'danger',
+        'computer vision': 'primary',
+        'data mining': 'success',
+        'information retrieval': 'info',
+        'software engineering': 'warning',
+        'computer networks': 'primary',
+        'computer security': 'danger',
+        'database systems': 'info',
+        'human computer interaction': 'success',
+        'computer graphics': 'warning',
+        'computer architecture': 'primary',
+        'operating systems': 'danger',
+        'programming languages': 'info',
+        'theoretical computer science': 'success',
+        'computational biology': 'warning',
+        'computational chemistry': 'primary',
+        'computational physics': 'danger'
+      }
+
+      const lowerField = field.toLowerCase()
+      return fieldTypes[lowerField] || 'info'
+    },
   },
   mounted() {
     // 监听全局事件
@@ -350,6 +408,23 @@ export default {
   min-width: 80px;
   height: 32px;
   line-height: 20px;
+}
+
+.global-modal-section.field-section {
+  margin-bottom: 24px;
+
+  .global-field-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+
+    .global-field-tag {
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+  }
 }
 
 .global-modal-section.global-modal-info {

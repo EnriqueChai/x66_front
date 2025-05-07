@@ -1,0 +1,114 @@
+{
+  "results": {
+    "field_info": {
+      "auto_id": null,
+      "id": "100",
+      "name": "Field 100",
+      "type": "field",
+      "citation": null,
+      "attr": null,
+      "label": null
+    },
+    "related_papers": [
+      {
+        "auto_id": 156574,
+        "id": 1987779630,
+        "title": "lattice qcd as a video game",
+        "citation": 7.0,
+        "year": 2007,
+        "venue": "computer physics communications",
+        "abstract": "Abstract   The speed, bandwidth and cost characteristics of today's PC graphics cards make them an attractive target as general purpose computational platforms. High performance can be achieved also for lattice simulations but the actual implementation can be cumbersome. This paper outlines the architecture and programming model of modern graphics cards for the lattice practitioner with the goal of exploiting these chips for Monte Carlo simulations. Sample code is also given."
+      },
+      {
+        "auto_id": 227072,
+        "id": 2093379922,
+        "title": "lattice qcd with domain decomposition on intel xeon phi co processors",
+        "citation": 1.0,
+        "year": 2014,
+        "venue": "arxiv high energy physics lattice",
+        "abstract": "The gap between the cost of moving data and the cost of computing continues to grow, making it ever harder to design iterative solvers on extreme-scale architectures. This problem can be alleviated by alternative algorithms that reduce the amount of data movement. We investigate this in the context of Lattice Quantum Chromo dynamics and implement such an alternative solver algorithm, based on domain decomposition, on Intel\u00ae Xeon Phi co-processor (KNC) clusters. We demonstrate close-to-linear on-chip scaling to all 60 cores of the KNC. With a mix of single- and half-precision the domain-decomposition method sustains 400-500 Gflop/s per chip. Compared to an optimized KNC implementation of a standard solver [1], our full multi-node domain-decomposition solver strong-scales to more nodes and reduces the time-to-solution by a factor of 5."
+      }
+    ],
+    "related_authors": [
+      {
+        "auto_id": 2068,
+        "id": 2163667412,
+        "name": "pradeep dubey",
+        "citation": 1200.0
+      },
+      {
+        "auto_id": 34131,
+        "id": 2238448411,
+        "name": "mikhail smelyanskiy",
+        "citation": 488.0
+      },
+      {
+        "auto_id": 164302,
+        "id": 2923585200,
+        "name": "karthikeyan vaidyanathan",
+        "citation": 96.0
+      },
+      {
+        "auto_id": 256712,
+        "id": 88204230,
+        "name": "dhiraj d kalamkar",
+        "citation": 52.0
+      },
+      {
+        "auto_id": 286353,
+        "id": 2952434579,
+        "name": "balint joo",
+        "citation": 19.0
+      },
+      {
+        "auto_id": 37483,
+        "id": 23659573,
+        "name": "simon heybrock",
+        "citation": 11.0
+      },
+      {
+        "auto_id": 37492,
+        "id": 2167854895,
+        "name": "tilo wettig",
+        "citation": 11.0
+      },
+      {
+        "auto_id": 164708,
+        "id": 2710002382,
+        "name": "g i egri",
+        "citation": 7.0
+      },
+      {
+        "auto_id": 164703,
+        "id": 2764857801,
+        "name": "zoltan fodor",
+        "citation": 7.0
+      },
+      {
+        "auto_id": 164704,
+        "id": 2775921990,
+        "name": "daniel nogradi",
+        "citation": 7.0
+      },
+      {
+        "auto_id": 164705,
+        "id": 2273759230,
+        "name": "s d katz",
+        "citation": 7.0
+      },
+      {
+        "auto_id": 164707,
+        "id": 2950621410,
+        "name": "c hoelbling",
+        "citation": 7.0
+      },
+      {
+        "auto_id": 164706,
+        "id": 2138981051,
+        "name": "kalman k szabo",
+        "citation": 7.0
+      }
+    ],
+    "source_table": "paper_field_P3"
+  }
+}
