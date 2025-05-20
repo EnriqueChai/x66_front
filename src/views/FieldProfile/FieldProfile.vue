@@ -48,14 +48,14 @@
     <!-- 3. 相关论文列表 -->
     <div class="section">
       <div class="section-header">
-        <h2>相关论文</h2>
+        <h2>高引论文</h2>
         <el-button type="text" @click="sortPapersByCitation">
           <i :class="paperSortDirection === 'desc' ? 'el-icon-sort-down' : 'el-icon-sort-up'"></i>
           按引用量排序
         </el-button>
       </div>
       <div class="paper-list">
-        <div v-for="paper in paginatedPapers" :key="paper.auto_id" class="paper-item">
+        <div v-for="paper in paginatedPapers" :key="paper.auto_id" class="paper-item" @click="showPaperDetail(paper)">
           <div class="paper-content">
             <h3 class="paper-title">{{ formatTitle(paper.title) }}</h3>
             <div class="paper-meta">
@@ -66,7 +66,7 @@
                 <i class="el-icon-reading"></i> 引用: {{ paper.citation || 0 }}
               </span>
               <span class="meta-item">
-                <i class="el-icon-notebook-2"></i> {{ paper.venue || '未知期刊' }}
+                <i class="el-icon-notebook-2"></i> {{ formatVenue(paper.venue) }}
               </span>
             </div>
             <p class="paper-abstract">{{ paper.abstract }}</p>
@@ -84,14 +84,14 @@
     <!-- 4. 相关学者列表 -->
     <div class="section">
       <div class="section-header">
-        <h2>相关学者</h2>
+        <h2>重要学者</h2>
         <el-button type="text" @click="sortAuthorsByCitation">
           <i :class="authorSortDirection === 'desc' ? 'el-icon-sort-down' : 'el-icon-sort-up'"></i>
           按引用量排序
         </el-button>
       </div>
       <div class="author-list">
-        <div v-for="author in paginatedAuthors" :key="author.auto_id" class="author-item">
+        <div v-for="author in paginatedAuthors" :key="author.auto_id" class="author-item" @click="navToAuthor(author)">
           <div class="author-avatar">
             <i class="el-icon-user-solid"></i>
           </div>
@@ -116,6 +116,8 @@
 </template>
 
 <script>
+import { getFieldInfo } from '@/api/getField'
+
 export default {
   name: 'FieldProfile',
   data() {
@@ -134,7 +136,7 @@ export default {
   },
   computed: {
     totalCitations() {
-      return this.relatedPapers.reduce((sum, paper) => sum + (paper.citation || 0), 0);
+      return this.fieldInfo.citation || 0;
     },
     sortedPapers() {
       const papers = [...this.relatedPapers];
@@ -168,7 +170,7 @@ export default {
   methods: {
     getFirstChar(name) {
       if (!name) return '未';
-      return name.charAt(0);
+      return name.charAt(0).toUpperCase();
     },
     formatTitle(title) {
       if (!title) return '未知标题';
@@ -181,6 +183,60 @@ export default {
       return name.split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+    },
+    formatVenue(venue) {
+      if (!venue) return '未知期刊';
+      
+      // 处理特殊缩写
+      const acronyms = {
+        'ieee': 'IEEE',
+        'acm': 'ACM',
+        'sigmod': 'SIGMOD',
+        'sigir': 'SIGIR',
+        'kdd': 'KDD',
+        'icde': 'ICDE',
+        'vldb': 'VLDB',
+        'cvpr': 'CVPR',
+        'iccv': 'ICCV',
+        'nips': 'NIPS',
+        'iclr': 'ICLR',
+      };
+      
+      // 将期刊名称分词
+      return venue.split(/\s+/)
+        .map(word => {
+          // 检查是否为特殊缩写
+          const lowerWord = word.toLowerCase();
+          if (acronyms[lowerWord]) {
+            return acronyms[lowerWord];
+          }
+          
+          // 否则首字母大写
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ');
+    },
+    // 显示论文详情弹窗
+    showPaperDetail(paper) {
+      // 准备论文数据
+      const paperData = {
+        ...paper,
+        title: paper.title,
+        summary: paper.abstract,
+        citations: paper.citation,
+        year: paper.year,
+        field: this.fieldInfo.name
+      };
+      
+      // 通过事件总线触发弹窗显示
+      this.$bus.$emit('showPaperModal', { paper: paperData, show: true });
+    },
+    // 导航到作者页面
+    navToAuthor(author) {
+      this.$router.push({ 
+        name: 'personalPage', 
+        query: { authorId: author.auto_id } 
+      });
     },
     sortPapersByCitation() {
       this.paperSortDirection = this.paperSortDirection === 'desc' ? 'asc' : 'desc';
@@ -201,191 +257,71 @@ export default {
     },
     handleAuthorCurrentChange(val) {
       this.authorCurrentPage = val;
+    },
+    async fetchFieldData() {
+      this.loading = true;
+      try {
+        // 从路由参数中获取编码后的字段名称，并解码
+        const encodedFieldName = this.$route.params.field_name;
+        const fieldName = decodeURIComponent(encodedFieldName);
+        
+        console.log('Fetching field data for:', fieldName);
+        
+        // 获取API响应
+        const response = await getFieldInfo(fieldName);
+        console.log('API Response received');
+        
+        // 尝试两种可能的数据结构访问方式
+        let results;
+        
+        // 情况1: 响应是直接从axios返回的
+        if (response && response.data && response.data.results) {
+          console.log('方式1: response.data.results 存在');
+          results = response.data.results;
+        } 
+        // 情况2: 响应已经被request_temp的拦截器处理
+        else if (response && response.results) {
+          console.log('方式2: response.results 存在');
+          results = response.results;
+        }
+        // 找不到有效的results
+        else {
+          console.error('无法找到有效的results数据结构');
+          console.log('Response:', response);
+          throw new Error('API返回数据格式不正确');
+        }
+        
+        // 打印找到的数据结构
+        console.log('找到的API结构包含:', Object.keys(results));
+        
+        // 检查字段并设置组件数据
+        if (!results.field_info) {
+          console.error('API返回数据中缺少field_info');
+          throw new Error('API返回数据缺少field_info');
+        }
+        
+        // 设置数据
+        this.fieldInfo = results.field_info;
+        this.relatedPapers = Array.isArray(results.related_papers) ? results.related_papers : [];
+        this.relatedAuthors = Array.isArray(results.related_authors) ? results.related_authors : [];
+        
+        console.log('数据解析完成:');
+        console.log('- 领域: ' + this.fieldInfo.name);
+        console.log('- 相关论文: ' + this.relatedPapers.length + '篇');
+        console.log('- 相关学者: ' + this.relatedAuthors.length + '人');
+      } catch (error) {
+        console.error('获取领域信息失败:', error);
+        this.$message.error(error.message || '获取领域信息失败，请稍后重试');
+        this.fieldInfo = {};
+        this.relatedPapers = [];
+        this.relatedAuthors = [];
+      } finally {
+        this.loading = false;
+      }
     }
   },
   async created() {
-    this.loading = true;
-    try {
-      // 模拟数据
-      this.fieldInfo = {
-        id: "100",
-        name: "计算机科学",
-        type: "field"
-      };
-
-      this.relatedPapers = [
-        {
-          auto_id: 1,
-          id: 1001,
-          title: "深度学习在计算机视觉中的应用研究",
-          citation: 1200,
-          year: 2020,
-          venue: "IEEE Transactions on Pattern Analysis and Machine Intelligence",
-          abstract: "本文综述了深度学习在计算机视觉领域的最新进展，包括卷积神经网络、注意力机制等关键技术，并探讨了未来发展方向。"
-        },
-        {
-          auto_id: 2,
-          id: 1002,
-          title: "区块链技术及其在金融领域的应用",
-          citation: 850,
-          year: 2019,
-          venue: "Journal of Cryptography",
-          abstract: "本文详细分析了区块链技术的核心原理，并探讨了其在金融领域的应用场景和挑战。"
-        },
-        {
-          auto_id: 3,
-          id: 1003,
-          title: "量子计算：原理与实现",
-          citation: 650,
-          year: 2021,
-          venue: "Nature Computing",
-          abstract: "本文介绍了量子计算的基本原理，包括量子比特、量子门等概念，并讨论了当前量子计算机的实现技术。"
-        },
-        {
-          auto_id: 4,
-          id: 1004,
-          title: "人工智能在医疗诊断中的应用研究",
-          citation: 550,
-          year: 2022,
-          venue: "Nature Medicine",
-          abstract: "本文探讨了人工智能技术在医疗诊断领域的应用，包括医学影像分析、疾病预测等方面。"
-        },
-        {
-          auto_id: 5,
-          id: 1005,
-          title: "云计算安全与隐私保护技术研究",
-          citation: 480,
-          year: 2021,
-          venue: "IEEE Transactions on Cloud Computing",
-          abstract: "本文研究了云计算环境下的安全与隐私保护技术，提出了新的安全架构和隐私保护方案。"
-        },
-        {
-          auto_id: 6,
-          id: 1006,
-          title: "大数据分析在金融风控中的应用",
-          citation: 420,
-          year: 2020,
-          venue: "Journal of Financial Technology",
-          abstract: "本文探讨了大数据分析技术在金融风控领域的应用，包括信用评估、欺诈检测等方面。"
-        },
-        {
-          auto_id: 7,
-          id: 1007,
-          title: "物联网安全与隐私保护研究",
-          citation: 380,
-          year: 2021,
-          venue: "IEEE Internet of Things Journal",
-          abstract: "本文研究了物联网环境下的安全与隐私保护问题，提出了新的安全机制和隐私保护方案。"
-        },
-        {
-          auto_id: 8,
-          id: 1008,
-          title: "边缘计算在智能交通系统中的应用",
-          citation: 320,
-          year: 2022,
-          venue: "IEEE Transactions on Intelligent Transportation Systems",
-          abstract: "本文探讨了边缘计算技术在智能交通系统中的应用，包括实时数据处理、交通流量预测等方面。"
-        },
-        {
-          auto_id: 9,
-          id: 1009,
-          title: "自然语言处理在智能客服中的应用",
-          citation: 280,
-          year: 2021,
-          venue: "ACM Transactions on Information Systems",
-          abstract: "本文研究了自然语言处理技术在智能客服系统中的应用，包括意图识别、情感分析等方面。"
-        },
-        {
-          auto_id: 10,
-          id: 1010,
-          title: "计算机视觉在自动驾驶中的应用研究",
-          citation: 250,
-          year: 2022,
-          venue: "IEEE Transactions on Intelligent Vehicles",
-          abstract: "本文探讨了计算机视觉技术在自动驾驶系统中的应用，包括目标检测、场景理解等方面。"
-        }
-      ];
-
-      this.relatedAuthors = [
-        {
-          auto_id: 1,
-          id: 2001,
-          name: "张明",
-          citation: 2500
-        },
-        {
-          auto_id: 2,
-          id: 2002,
-          name: "李华",
-          citation: 1800
-        },
-        {
-          auto_id: 3,
-          id: 2003,
-          name: "王强",
-          citation: 1500
-        },
-        {
-          auto_id: 4,
-          id: 2004,
-          name: "刘芳",
-          citation: 1200
-        },
-        {
-          auto_id: 5,
-          id: 2005,
-          name: "陈伟",
-          citation: 900
-        },
-        {
-          auto_id: 6,
-          id: 2006,
-          name: "杨光",
-          citation: 800
-        },
-        {
-          auto_id: 7,
-          id: 2007,
-          name: "赵静",
-          citation: 750
-        },
-        {
-          auto_id: 8,
-          id: 2008,
-          name: "周杰",
-          citation: 700
-        },
-        {
-          auto_id: 9,
-          id: 2009,
-          name: "吴婷",
-          citation: 650
-        },
-        {
-          auto_id: 10,
-          id: 2010,
-          name: "郑宇",
-          citation: 600
-        },
-        {
-          auto_id: 11,
-          id: 2011,
-          name: "孙浩",
-          citation: 550
-        },
-        {
-          auto_id: 12,
-          id: 2012,
-          name: "林峰",
-          citation: 500
-        }
-      ];
-    } catch (error) {
-      console.error('获取领域信息失败:', error);
-      this.$message.error('获取领域信息失败，请稍后重试');
-    } finally {
-      this.loading = false;
-    }
+    await this.fetchFieldData();
   }
 }
 </script>
@@ -575,6 +511,7 @@ export default {
       margin-bottom: 15px;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       transition: all 0.3s;
+      cursor: pointer;
 
       &:hover {
         transform: translateX(5px);
@@ -633,6 +570,7 @@ export default {
       align-items: center;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       transition: all 0.3s;
+      cursor: pointer;
 
       &:hover {
         transform: translateY(-3px);

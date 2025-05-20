@@ -67,9 +67,6 @@
             <el-button type="primary" icon="el-icon-download" round @click="downloadPdf">
               下载 PDF
             </el-button>
-            <el-button type="success" icon="el-icon-star-off" round>
-              收藏
-            </el-button>
           </div>
         </div>
       </transition>

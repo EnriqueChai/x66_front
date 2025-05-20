@@ -17,6 +17,9 @@
           :page-size="pageSize" :total="author.length" layout="total, sizes, prev, pager, next, jumper"
           :page-sizes="[5, 10, 20, 50]" />
       </div>
+      <div v-if="author.length === 0" class="no-data">
+        暂无数据
+      </div>
     </div>
   </div>
 </template>
@@ -174,6 +177,13 @@ export default {
           box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
       }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px 0;
+      color: #909399;
+      font-size: 14px;
     }
   }
 }

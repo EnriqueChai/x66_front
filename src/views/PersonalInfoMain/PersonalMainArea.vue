@@ -1,13 +1,13 @@
 <template>
   <div class="venue-main-area">
-    <div class="chart-section">
+    <div class="chart-section" v-loading="chartLoading">
       <div class="section-header">
         <h3><i class="el-icon-data-line"></i> 论文发表趋势</h3>
       </div>
       <div ref="chartContainer" class="chart-container"></div>
     </div>
 
-    <div class="papers-section">
+    <div class="papers-section" v-loading="paperLoading">
       <div class="tab-header">
         <h3><i class="el-icon-document"></i> 论文列表</h3>
         <div class="filter-sort">
@@ -29,31 +29,35 @@
       <!-- 论文列表 -->
       <div class="papers-list">
         <div class="paper-items-container">
-          <transition-group name="fade-transform" mode="out-in">
-            <div v-for="(row, index) in tableData" :key="row.id || row.title || index" class="paper-list-item"
+          <div v-if="tableData.length === 0 && !paperLoading" class="empty-state">
+            <i class="el-icon-document"></i>
+            <span>暂无论文数据</span>
+          </div>
+          <transition-group name="fade-transform" mode="out-in" v-else>
+            <div v-for="(row, index) in tableData" :key="row.id || index" class="paper-list-item"
               @click="handleRowClick(row)">
               <div class="paper-icon">
                 <svg-icon icon-class="pdf" class="pdf-icon" />
               </div>
 
               <div class="paper-content">
-                <h3 class="paper-title">{{ row.title }}</h3>
+                <h3 class="paper-title">{{ capitalizeTitle(row.title) }}</h3>
 
                 <div class="paper-meta">
                   <div class="paper-authors">
-                    <i class="el-icon-user"></i> {{ row.authors }}
+                    <i class="el-icon-user"></i> {{ formatAuthorNames(row.authors) }}
                   </div>
                   <div class="paper-stats">
                     <span class="paper-year">
                       <i class="el-icon-date"></i> {{ row.year }}
                     </span>
                     <span class="paper-citations">
-                      <i class="el-icon-reading"></i> 引用: {{ row.ncitation }}
+                      <i class="el-icon-reading"></i> 引用: {{ row.ncitation || 0 }}
                     </span>
                   </div>
                   <div class="paper-bottom-row">
                     <div class="paper-tags">
-                      <el-tag size="mini" effect="plain" class="paper-venue">{{ row.venue_name }}</el-tag>
+                      <el-tag size="mini" effect="plain" class="paper-venue">{{ formatVenue(row.venue) }}</el-tag>
                       <el-tag v-if="row.field" size="mini" effect="plain" class="paper-field"
                         :type="getFieldTagType(row.field)">
                         {{ formatFieldName(row.field) }}
@@ -70,7 +74,7 @@
       </div>
 
       <!-- 分页 -->
-      <div class="pagination">
+      <div class="pagination" v-if="paperListLength > 0">
         <el-pagination background layout="prev, pager, next" :total="paperListLength" :page-size="pageSize"
           :current-page.sync="currentPage" @current-change="handlePageChange" />
       </div>
@@ -100,6 +104,8 @@ export default {
       tabPosition: '按年份排序',
       sortDirection: 'desc',
       loading: false,
+      chartLoading: false,
+      paperLoading: false,
 
       // 图表实例
       myChart: null
@@ -153,27 +159,29 @@ export default {
   },
   methods: {
     async getPaperList() {
+      this.paperLoading = true
+      this.chartLoading = true
       try {
-        this.loading = true
         const res = await getAuthorPaper(this.authorId)
-        console.log(res)
-        this.allData = res.map(paper => ({
-          ...paper,
-          title: this.capitalizeTitle(paper.title),
-          venue_name: this.formatVenue(paper.venue),
-          authors: this.formatAuthorNames(paper.authors),
-          authorsList: this.splitAuthors(paper.authors),
-          field: paper.field || ''
-        }))
-        this.paperListLength = this.allData.length
-        this.updateTableData()
+        if (Array.isArray(res)) {
+          this.allData = res
+          this.paperListLength = res.length
+          this.updateTableData()
+          this.$nextTick(() => {
+            this.updateChartData()
+          })
+        } else {
+          console.warn('getPaperList API response is not an array:', res)
+          this.allData = []
+          this.paperListLength = 0
+        }
       } catch (error) {
-        console.error('获取论文信息失败:', error)
+        console.error('获取论文列表失败:', error)
+        this.allData = []
+        this.paperListLength = 0
       } finally {
-        this.loading = false
-        this.$nextTick(() => {
-          this.initChart()
-        })
+        this.paperLoading = false
+        this.chartLoading = false
       }
     },
 
@@ -182,10 +190,31 @@ export default {
         this.tableData = []
         return
       }
-      const sortedData = this.sortData([...this.allData])
+
+      // 对数据进行排序
+      const sortedData = [...this.allData].sort((a, b) => {
+        if (this.tabPosition === '按年份排序') {
+          const yearA = parseInt(a.year) || 0
+          const yearB = parseInt(b.year) || 0
+          return this.sortDirection === 'desc' ? yearB - yearA : yearA - yearB
+        } else {
+          const citationA = parseInt(a.ncitation) || 0
+          const citationB = parseInt(b.ncitation) || 0
+          return this.sortDirection === 'desc' ? citationB - citationA : citationA - citationB
+        }
+      })
+
+      // 分页处理
       const start = (this.currentPage - 1) * this.pageSize
-      const end = this.currentPage * this.pageSize
-      this.tableData = sortedData.slice(start, end)
+      const end = start + this.pageSize
+      this.tableData = sortedData.slice(start, end).map(paper => ({
+        ...paper,
+        title: this.capitalizeTitle(paper.title),
+        authors: this.formatAuthorNames(paper.authors),
+        venue: this.formatVenue(paper.venue),
+        ncitation: parseInt(paper.ncitation) || 0,
+        year: paper.year || '未知年份'
+      }))
     },
 
     handlePageChange(val) {
@@ -218,16 +247,16 @@ export default {
     handleRowClick(row) {
       // 准备论文数据，格式与全局模态框要求一致
       const paper = {
-        title: row.title || '未知标题',
-        authors: row.authorsList || [],
-        time: row.year || '',
-        year: row.year || '',
+        title: this.capitalizeTitle(row.title),
+        authors: typeof row.authors === 'string' ? row.authors.split(',').map(a => a.trim()) : [],
+        time: row.year,
+        year: row.year,
         summary: row.abstractText || '暂无摘要',
         abstract: row.abstractText || '暂无摘要',
         citations: row.ncitation || 0,
         pdfUrl: row.url || '',
         themes: row.keywords || [],
-        venue_name: row.venue_name || '',
+        venue_name: row.venue || '',
         field: row.field || ''
       }
 
@@ -467,15 +496,15 @@ export default {
     // 添加新的格式化方法
     formatFieldName(field) {
       if (!field) return ''
-      // 直接返回原始字段，首字母大写
+      // 转换为大写并添加特殊格式
       return field.split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .map(word => word.toUpperCase())
         .join(' ')
     },
 
     // 获取领域标签类型
     getFieldTagType(field) {
-      return 'success'  // 统一使用绿色标签
+      return ''  // 移除默认的 success 类型，使用自定义样式
     }
   }
 }
@@ -584,6 +613,24 @@ export default {
       margin-top: 20px;
       position: relative;
       min-height: 400px;
+
+      .empty-state {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #909399;
+        
+        i {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+        
+        span {
+          font-size: 16px;
+        }
+      }
 
       .paper-items-container {
         position: relative;
@@ -702,7 +749,29 @@ export default {
 
                   .paper-field {
                     border: none;
-                    font-weight: 500;
+                    font-weight: 600;
+                    font-size: 13px;
+                    padding: 6px 12px;
+                    min-height: 28px;
+                    line-height: 1.2;
+                    display: inline-flex;
+                    align-items: center;
+                    background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+                    color: white;
+                    box-shadow: 0 2px 8px rgba(255, 94, 98, 0.3);
+                    transition: all 0.3s ease;
+                    border-radius: 4px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    &:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 12px rgba(255, 94, 98, 0.4);
+                      background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+                    }
                   }
                 }
 

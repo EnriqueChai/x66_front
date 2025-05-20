@@ -19,7 +19,7 @@
           <el-button round @click="toggleView('author')" :class="{ active: currentView === 'author' }">作者</el-button>
           <el-button round @click="toggleView('paper')" :class="{ active: currentView === 'paper' }">论文</el-button>
           <el-button round @click="toggleView('conference')"
-            :class="{ active: currentView === 'conference' }">期刊会议</el-button>
+            :class="{ active: currentView === 'conference' }">会议</el-button>
         </div>
         <transition name="fade" mode="out-in">
           <SearchMain v-if="currentView === 'author'" key="author" />

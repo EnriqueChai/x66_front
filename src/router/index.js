@@ -42,12 +42,12 @@ const routes = [
     component: () => import('@/views/PersonalInfoMain/indexModel')
   },
   {
-    path: '/specificVenue',
+    path: '/venue/:id',
     name: 'specificVenue',
     component: () => import('@/views/SpecificVenue/index')
   },
   {
-    path: '/field/:id',
+    path: '/field/:field_name',
     name: 'fieldProfile',
     component: () => import('@/views/FieldProfile/FieldProfile.vue'),
   }

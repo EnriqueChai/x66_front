@@ -2,7 +2,6 @@
   <div class="side-card venues-card">
     <div class="card-header">
       <h3><i class="el-icon-collection"></i> 期刊/会议推荐</h3>
-      <el-button type="text" class="more-btn">全部 <i class="el-icon-arrow-right"></i></el-button>
     </div>
     
     <div class="venue-list">
@@ -93,18 +92,14 @@ export default {
   methods: {
     goToVenueDetail(venue) {
       this.$router.push({
-        path: '/specificVenue',
-        query: {
-          id: venue.id,
-          name: venue.full_name,
-          shortName: venue.short_name
-        }
-      });
+        name: 'specificVenue',
+        params: { id: venue.id }
+      })
     },
     generateSampleData() {
       const venues = [
         {
-          id: 1,
+          id: 3124,
           full_name: "IEEE Conference on Computer Vision and Pattern Recognition",
           short_name: "CVPR",
           metrics: {
@@ -136,7 +131,7 @@ export default {
           recent_papers: this.generateRecentPapers("CVPR")
         },
         {
-          id: 2,
+          id: 606,
           full_name: "Neural Information Processing Systems",
           short_name: "NeurIPS",
           metrics: {
@@ -168,7 +163,7 @@ export default {
           recent_papers: this.generateRecentPapers("NeurIPS")
         },
         {
-          id: 3,
+          id: 2915,
           full_name: "International Conference on Learning Representations",
           short_name: "ICLR",
           metrics: {

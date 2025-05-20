@@ -29,6 +29,7 @@ import { getPaper } from '@/api/getPaper'
 import { isChinese, translateToEnglish } from '@/utils/translate'
 import { getVenue } from '@/api/getVenue'
 
+
 export default {
   name: 'SearchHeadWithTitle',
   props: {

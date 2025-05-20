@@ -59,6 +59,7 @@
 
 <script>
 import { getAuthorInfo } from '@/api/authorInfo'
+import eventBus from '@/utils/eventBus'
 
 export default {
   props: {
@@ -107,8 +108,9 @@ export default {
       try {
         this.loading = true
         const res = await getAuthorInfo(this.authorId)
-        console.log(res)
+        console.log('Author info:', res)
         this.author = res
+        eventBus.emit('author-info-updated', res)
         this.loading = false
       } catch (error) {
         console.error('获取作者信息失败:', error)

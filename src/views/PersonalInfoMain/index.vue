@@ -13,10 +13,13 @@
         <PersonalMainArea :authorId="authorId" />
 
         <div class="sideArea">
-          <PersonalWordCloud :authorId="authorId" />
+          <div class="sideArea-header">
+            <h2>学术路径规划</h2>
+          </div>
+          <PersonalWordCloud :authorId="authorId" :authorField="authorField" />
           <!-- <PersonalAuthorStatistic :authorId="authorId" /> -->
           <PersonalSimilarAuthor :authorId="authorId" />
-          <PersonalRecomConference />
+          <PersonalRecomConference :authorId="authorId" />
         </div>
       </div>
     </div>
@@ -32,6 +35,7 @@ import PersonalSimilarAuthor from './PersonalSimilarAuthor.vue'
 import PersonalCorAuthor from './PersonalCorAuthor.vue'
 import PersonalAuthorStatistic from './PersonalAuthorStatistic.vue'
 import PersonalRecomConference from './PersonalRecomConference.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -49,8 +53,17 @@ export default {
       fullscreenLoading: false,
       authorId: this.$route.query.authorId
     }
+  },
+  computed: {
+    ...mapState('author', ['author']),
+    authorField() {
+      const author = this.author.find(a => a.id === this.authorId)
+      console.log('当前作者ID:', this.authorId)
+      console.log('所有作者:', this.author)
+      console.log('找到的作者:', author)
+      return author ? author.field : ''
+    }
   }
-
 }
 </script>
 
@@ -94,6 +107,36 @@ export default {
       flex-direction: column;
       box-sizing: border-box;
       gap: 20px;
+
+      .sideArea-header {
+        text-align: center;
+        margin-bottom: 10px;
+
+        h2 {
+          font-family: 'Noto Sans SC', sans-serif;
+          font-size: 24px;
+          font-weight: 600;
+          color: #2c3e50;
+          margin: 0;
+          padding: 10px 0;
+          background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #5271ff, #3195ff, #00b8ff);
+            border-radius: 3px;
+          }
+        }
+      }
     }
   }
 
@@ -122,6 +165,11 @@ export default {
         flex-wrap: wrap;
         justify-content: space-between;
 
+        .sideArea-header {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
         >* {
           flex: 1;
           min-width: 300px;
@@ -142,6 +190,14 @@ export default {
     .main {
       .sideArea {
         flex-direction: column;
+
+        .sideArea-header {
+          margin-bottom: 15px;
+
+          h2 {
+            font-size: 20px;
+          }
+        }
 
         >* {
           min-width: 100%;

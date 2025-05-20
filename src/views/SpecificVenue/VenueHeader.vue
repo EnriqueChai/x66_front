@@ -8,34 +8,42 @@
       </div>
       <div class="venue-info">
         <h1 class="venue-title">
-          <div class="title-line">{{ venueName }}</div>
+          <div class="title-line">{{ venueInfo.full_name }}</div>
           <div class="subtitle-line">
             <span class="venue-type">
               <i class="el-icon-collection-tag"></i>
-              {{ venueInfo.type || "未知类型" }}
+              {{ venueInfo.short_name }}
             </span>
             <span class="venue-divider"></span>
             <span class="venue-id">
               <i class="el-icon-document"></i>
-              ID: {{ venueInfo.auto_id || "未知ID" }}
+              ID: {{ venueInfo.id }}
+            </span>
+            <span class="venue-divider"></span>
+            <span class="venue-year">
+              <i class="el-icon-date"></i>
+              创办于 {{ venueInfo.year_founded }} 年前
             </span>
           </div>
         </h1>
-        <!-- 可添加额外的会议信息 -->
-        <div class="venue-metrics" v-if="venueInfo.metrics">
-          <div class="metric-item" v-if="venueInfo.metrics.ccf_rank">
+        <div class="venue-metrics">
+          <div class="metric-item">
             <span class="metric-label">CCF等级</span>
-            <span class="metric-value" :class="'ccf-' + venueInfo.metrics.ccf_rank.toLowerCase()">
-              {{ venueInfo.metrics.ccf_rank }}
+            <span class="metric-value" :class="'ccf-' + venueInfo.ccf_level.toLowerCase()">
+              {{ venueInfo.ccf_level }}
             </span>
           </div>
-          <div class="metric-item" v-if="venueInfo.metrics.h_index">
-            <span class="metric-label">H指数</span>
-            <span class="metric-value">{{ venueInfo.metrics.h_index }}</span>
+          <div class="metric-item">
+            <span class="metric-label">H5指数</span>
+            <span class="metric-value">{{ venueInfo.h5_index }}</span>
           </div>
-          <div class="metric-item" v-if="venueInfo.metrics.accept_rate">
-            <span class="metric-label">接收率</span>
-            <span class="metric-value">{{ venueInfo.metrics.accept_rate }}%</span>
+          <div class="metric-item">
+            <span class="metric-label">H5中位数</span>
+            <span class="metric-value">{{ venueInfo.h5_median }}</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">近5年引用中位数</span>
+            <span class="metric-value">{{ venueInfo.median_citation_of_papers_in_recent_5_years }}</span>
           </div>
         </div>
       </div>
@@ -57,13 +65,120 @@ export default {
     }
   },
   computed: {
-    venueName() {
-      return this.venueInfo.name || '未知会议'
-    },
     venueInitials() {
-      if (!this.venueName) return '?'
-      // 获取会议名称的首字母
-      return this.venueName.split(/\s+/).map(word => word[0]).join('').toUpperCase().slice(0, 2)
+      if (!this.venueInfo.short_name) return '?'
+      return this.venueInfo.short_name.slice(0, 2).toUpperCase()
+    }
+  },
+  methods: {
+    handleTabClick(tab) {
+      if (tab.name === 'third') {
+        this.$nextTick(() => {
+          console.log('切到历史趋势tab');
+          this.initCharts();
+          this.updateCharts();
+        });
+      }
+    },
+    initCharts() {
+      console.log('contributionChart ref:', this.$refs.contributionChart);
+      console.log('acceptanceChart ref:', this.$refs.acceptanceChart);
+      console.log('publicationChart ref:', this.$refs.publicationChart);
+
+      // 先销毁再初始化，防止多次初始化
+      if (this.charts.contribution) {
+        this.charts.contribution.dispose();
+        this.charts.contribution = null;
+      }
+      if (this.charts.acceptance) {
+        this.charts.acceptance.dispose();
+        this.charts.acceptance = null;
+      }
+      if (this.charts.publication) {
+        this.charts.publication.dispose();
+        this.charts.publication = null;
+      }
+
+      if (this.$refs.contributionChart) {
+        this.charts.contribution = echarts.init(this.$refs.contributionChart);
+      }
+      if (this.$refs.acceptanceChart) {
+        this.charts.acceptance = echarts.init(this.$refs.acceptanceChart);
+      }
+      if (this.$refs.publicationChart) {
+        this.charts.publication = echarts.init(this.$refs.publicationChart);
+      }
+    },
+    updateCharts() {
+      console.log('venueInfo:', this.venueInfo);
+
+      if (!this.venueInfo) return;
+      // 投稿量趋势图
+      if (this.charts.contribution) {
+        const contributionOption = {
+          tooltip: { trigger: 'axis' },
+          grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: this.venueInfo.trending_of_contributions_in_recent_5_years.map(item => item.year)
+          },
+          yAxis: { type: 'value', name: '投稿量' },
+          series: [{
+            data: this.venueInfo.trending_of_contributions_in_recent_5_years.map(item => item.score),
+            type: 'line',
+            smooth: true,
+            areaStyle: { opacity: 0.3 }
+          }]
+        };
+        this.charts.contribution.setOption(contributionOption);
+      }
+      // 接收率趋势图
+      if (this.charts.acceptance) {
+        const acceptanceOption = {
+          tooltip: { trigger: 'axis', formatter: '{b}年: {c}%' },
+          grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: this.venueInfo.the_trend_of_admission_rate_in_recent_five_years.map(item => item.year)
+          },
+          yAxis: {
+            type: 'value',
+            name: '接收率',
+            axisLabel: { formatter: '{value}%' }
+          },
+          series: [{
+            data: this.venueInfo.the_trend_of_admission_rate_in_recent_five_years.map(item => (item.score * 100).toFixed(1)),
+            type: 'line',
+            smooth: true,
+            areaStyle: { opacity: 0.3 }
+          }]
+        };
+        this.charts.acceptance.setOption(acceptanceOption);
+      }
+      // 发文量趋势图
+      if (this.charts.publication) {
+        const publicationOption = {
+          tooltip: { trigger: 'axis' },
+          grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: this.venueInfo.the_trend_of_publication_volume_in_recent_five_years.map(item => item.year)
+          },
+          yAxis: { type: 'value', name: '发文量' },
+          series: [{
+            data: this.venueInfo.the_trend_of_publication_volume_in_recent_five_years.map(item => item.score),
+            type: 'line',
+            smooth: true,
+            areaStyle: { opacity: 0.3 }
+          }]
+        };
+        this.charts.publication.setOption(publicationOption);
+      }
+    },
+    handleResize() {
+      Object.values(this.charts).forEach(chart => {
+        if (chart) chart.resize();
+      });
     }
   }
 }
@@ -138,7 +253,7 @@ export default {
         animation: fadeIn 1.5s ease-out;
         font-family: 'Noto Sans SC', sans-serif;
         
-        .venue-type, .venue-id {
+        .venue-type, .venue-id, .venue-year {
           display: flex;
           align-items: center;
           

@@ -29,22 +29,26 @@
       <div class="stat-item">
         <strong>相关论文数：</strong>{{ totalPaperCount }}
       </div>
-      <div class="stat-item">
+      <div class="stat-item year-filter">
         <strong>年份：</strong>
-        <el-tag v-for="(count, year) in yearDistribution" :key="year" class="stat-tag"
-          :type="isYearSelected(year) ? 'primary' : 'warning'" @click="handleYearFilter(year)">
-          {{ year }}: {{ count }}
-        </el-tag>
+        <div class="filter-tags">
+          <el-tag v-for="(count, year) in yearDistribution" :key="year" class="filter-tag year-tag"
+            :type="isYearSelected(year) ? 'primary' : 'info'" @click="handleYearFilter(year)">
+            {{ year }}: {{ count }}
+          </el-tag>
+        </div>
       </div>
-      <div class="stat-item">
+      <div class="stat-item venue-filter">
         <strong>期刊：</strong>
-        <el-tag v-for="(count, venue) in venueDistribution" :key="venue" class="stat-tag"
-          :type="isVenueSelected(venue) ? 'primary' : 'success'" @click="handleVenueFilter(venue)">
-          {{ formatVenue(venue) }}: {{ count }}
-        </el-tag>
+        <div class="filter-tags">
+          <el-tag v-for="(count, venue) in venueDistribution" :key="venue" class="filter-tag venue-tag"
+            :type="isVenueSelected(venue) ? 'success' : 'info'" @click="handleVenueFilter(venue)">
+            {{ formatVenue(venue) }}: {{ count }}
+          </el-tag>
+        </div>
       </div>
       <div class="stat-item" v-if="filterYear || filterVenue">
-        <el-button type="primary" plain @click="resetFilter">
+        <el-button type="primary" plain size="small" @click="resetFilter">
           重置筛选
         </el-button>
       </div>
@@ -54,6 +58,9 @@
     <div class="content-list">
       <SearchMainPaperList v-for="(paper, index) in paginatedPapers" :key="`${paper.id}-${index}`" :paper="paper"
         class="paper-item" />
+      <div v-if="sortedPapers.length === 0" class="no-data">
+        暂无数据
+      </div>
     </div>
     <div class="pagination-wrap" v-if="sortedPapers.length">
       <el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
@@ -90,16 +97,26 @@ export default {
 
     filteredPapers() {
       let result = Array.isArray(this.papers) ? [...this.papers] : [];
+
+      // 年份筛选
       if (this.filterYear) {
-        result = this.filterYear === '未知'
-          ? result.filter(p => !p.year)
-          : result.filter(p => p.year === this.filterYear);
+        result = result.filter(p => {
+          const paperYear = p.year ? Number(p.year) : null;
+          const filterYearNum = this.filterYear === '未知' ? null : Number(this.filterYear);
+          return paperYear === filterYearNum;
+        });
       }
+
+      // 期刊筛选
       if (this.filterVenue) {
-        result = this.filterVenue === '未知期刊'
-          ? result.filter(p => !p.venue)
-          : result.filter(p => p.venue === this.filterVenue);
+        result = result.filter(p => {
+          if (this.filterVenue === '未知期刊') {
+            return !p.venue;
+          }
+          return p.venue === this.filterVenue;
+        });
       }
+
       return result;
     },
 
@@ -125,8 +142,8 @@ export default {
     yearDistribution() {
       const dist = {};
       (this.papers || []).forEach(p => {
-        const y = p.year || '未知';
-        dist[y] = (dist[y] || 0) + 1;
+        const year = p.year ? Number(p.year) : '未知';
+        dist[year] = (dist[year] || 0) + 1;
       });
       return dist;
     },
@@ -158,10 +175,12 @@ export default {
       this.currentPage = 1;
     },
     isYearSelected(year) {
-      return this.filterYear === (year === '未知' ? '未知' : Number(year));
+      const yearNum = year === '未知' ? '未知' : Number(year);
+      return this.filterYear === yearNum;
     },
     handleYearFilter(year) {
-      this.filterYear = this.filterYear === year ? null : year;
+      const yearNum = year === '未知' ? '未知' : Number(year);
+      this.filterYear = this.filterYear === yearNum ? null : yearNum;
       this.currentPage = 1;
     },
     isVenueSelected(venue) {
@@ -226,25 +245,96 @@ export default {
   }
 
   .stats {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4eff9 100%);
+    border-radius: 12px;
+    margin-bottom: 20px;
 
     .stat-item {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
 
-      strong {
-        margin-right: 8px;
-        color: #2c3e50;
+      &:last-child {
+        margin-bottom: 0;
       }
 
-      .stat-tag {
-        margin-right: 6px;
-        margin-bottom: 6px;
-        cursor: pointer;
-        flex: 0 0 auto;
+      &.year-filter {
+        background: rgba(0, 198, 251, 0.05);
+        border: 1px solid rgba(0, 198, 251, 0.1);
+      }
+
+      &.venue-filter {
+        background: rgba(0, 176, 155, 0.05);
+        border: 1px solid rgba(0, 176, 155, 0.1);
+      }
+
+      strong {
+        margin-right: 12px;
+        color: #2c3e50;
+        font-size: 15px;
+        min-width: 80px;
+      }
+
+      .filter-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        flex: 1;
+
+        .filter-tag {
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
+          font-weight: 500;
+          padding: 0 12px;
+          height: 28px;
+          line-height: 26px;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          }
+
+          &.year-tag {
+            &.el-tag--primary {
+              background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+              color: white;
+            }
+
+            &.el-tag--info {
+              background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+              color: #005bea;
+              border: 1px solid rgba(0, 91, 234, 0.2);
+            }
+          }
+
+          &.venue-tag {
+            &.el-tag--success {
+              background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+              color: white;
+            }
+
+            &.el-tag--info {
+              background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+              color: #2e7d32;
+              border: 1px solid rgba(46, 125, 50, 0.2);
+            }
+          }
+        }
+      }
+
+      .el-button {
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
       }
     }
   }
@@ -267,6 +357,13 @@ export default {
         box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
         border-color: rgba(52, 152, 219, 0.1);
       }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px 0;
+      color: #909399;
+      font-size: 14px;
     }
   }
 

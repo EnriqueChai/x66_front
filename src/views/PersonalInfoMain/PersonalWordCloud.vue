@@ -1,6 +1,6 @@
 <template>
   <div class="firstSide" v-loading="loading">
-    <h3>研究兴趣</h3>
+    <h3>研究焦点分析</h3>
     <!-- <hr> -->
     <div ref="wordCloudChart" class="wordCloud"></div>
   </div>
@@ -10,6 +10,8 @@
 import * as echarts from 'echarts'
 import 'echarts-wordcloud'
 import { getAuthorInfo } from '@/api/authorInfo'
+import { getFieldInfo } from '@/api/getField'
+import eventBus from '@/utils/eventBus'
 
 export default {
   name: 'PersonalWordCloud',
@@ -17,12 +19,17 @@ export default {
     authorId: {
       type: String,
       required: true
+    },
+    authorField: {  // 添加新的prop
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       words: [],
       loading: true,
+      authorInfo: null, // 存储作者信息
       colors: [
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
         '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
@@ -36,12 +43,24 @@ export default {
       if (newId) {
         this.fetchAuthorTags()
       }
+    },
+    authorField: {
+      immediate: true,
+      handler(newVal) {
+        console.log('PersonalWordCloud - authorField changed:', newVal)
+      }
     }
   },
   created() {
     if (this.authorId) {
       this.fetchAuthorTags()
     }
+    console.log('PersonalWordCloud - authorField prop:', this.authorField)
+    
+    // 监听作者信息更新事件
+    eventBus.on('author-info-updated', this.handleAuthorInfoUpdate)
+    // 监听作者领域更新事件
+    eventBus.on('author-field-updated', this.handleAuthorFieldUpdate)
   },
   mounted() {
     this.initChart()
@@ -52,12 +71,30 @@ export default {
       this.chart.dispose()
     }
     window.removeEventListener('resize', this.resizeChart)
+    
+    // 移除事件监听
+    eventBus.off('author-info-updated', this.handleAuthorInfoUpdate)
+    eventBus.off('author-field-updated', this.handleAuthorFieldUpdate)
   },
   methods: {
+    // 处理作者信息更新
+    handleAuthorInfoUpdate(authorInfo) {
+      console.log('接收到作者信息更新:', authorInfo)
+      this.authorInfo = authorInfo
+    },
+    // 处理作者领域更新
+    handleAuthorFieldUpdate(fieldName) {
+      console.log('接收到作者领域更新:', fieldName)
+      this.authorField = fieldName
+    },
     async fetchAuthorTags() {
       this.loading = true
       try {
         const res = await getAuthorInfo(this.authorId)
+        // 保存作者信息，包括研究领域
+        this.authorInfo = res
+        console.log('获取到作者信息:', res)
+        
         const tag = res.tags
         let parsedData;
         if (typeof tag === 'string') {
@@ -145,24 +182,58 @@ export default {
           type: 'wordCloud',
           width: '100%',
           height: '100%',
-          shape: 'rectangular', // 使用矩形形状，更紧凑
-          gridSize: 5,           // 减小网格大小，使词云更加密集
-          sizeRange: [15, 55],   // 调整字体大小范围
-          rotationRange: [0, 0], // 禁用旋转，使词语排列更整齐
+          shape: 'rectangular',
+          gridSize: 5,
+          sizeRange: [15, 55],
+          rotationRange: [0, 0],
           rotationStep: 0,
-          spiral: 'archimedean', // 设置螺旋形状为 archimedean
-          textPadding: 1,        // 减少词语间距
-          drawOutOfBound: true, // 不绘制出界词语
+          spiral: 'archimedean',
+          textPadding: 1,
+          drawOutOfBound: true,
           textStyle: {
             fontFamily: 'sans-serif',
             fontWeight: 'bold',
-            color: this.colorFunction
+            color: this.colorFunction,
+            cursor: 'pointer'
+          },
+          emphasis: {
+            textStyle: {
+              textShadowBlur: 10,
+              textShadowColor: 'rgba(0, 0, 0, 0.15)'
+            }
           },
           data: this.words
         }]
       }
       this.chart.setOption(option)
+      
+      this.chart.off('click')
+      this.chart.on('click', (params) => {
+        console.log('词云项被点击:', params);
+        this.navigateToAuthorField();
+      })
     },
+    // 导航到作者的主要研究领域
+    navigateToAuthorField() {
+      if (this.authorField) {
+        console.log('导航到作者主要研究领域:', this.authorField);
+        
+        // 使用encodeURIComponent处理可能包含的特殊字符
+        const encodedFieldName = encodeURIComponent(this.authorField);
+        console.log('编码后的领域名称:', encodedFieldName);
+        
+        // 使用$router.resolve生成路由，并在新标签页打开
+        const route = this.$router.resolve({
+          name: 'fieldProfile',
+          params: { field_name: encodedFieldName }
+        });
+        window.open(route.href, '_blank');
+      } else {
+        console.warn('无法获取作者的研究领域信息');
+        this.$message.warning('该作者没有指定研究领域');
+      }
+    },
+    
     resizeChart() {
       if (this.chart) {
         this.chart.resize()
@@ -200,6 +271,7 @@ export default {
     height: 380px;
     width: 100%;
     transition: all 0.3s ease;
+    cursor: pointer;
   }
 }
 

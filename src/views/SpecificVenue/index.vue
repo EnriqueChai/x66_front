@@ -1,7 +1,7 @@
 <template>
   <div class="venue-page" v-loading.fullscreen.lock="fullscreenLoading">
     <div class="animated-background"></div>
-    <div class="content-wrapper">
+    <div class="content-wrapper" v-if="!fullscreenLoading">
       <!-- 头部区域 -->
       <div class="venue-header-container">
         <VenueHeader :venueInfo="venueInfo" />
@@ -41,6 +41,7 @@ import VenueRecommendedReviewers from './VenueRecommendedReviewers.vue'
 import { getSpecificVenueData } from '@/api/getSpecificVenueData'
 
 export default {
+  name: 'SpecificVenue',
   components: {
     VenueHeader,
     VenueFirstTab,
@@ -50,8 +51,8 @@ export default {
   },
   data() {
     return {
-      fullscreenLoading: false,
-      venueName: this.$route.query.venueName,
+      fullscreenLoading: true,
+      venueId: this.$route.params.id,
       venueInfo: {},
       papers: [],
       authors: [],
@@ -65,9 +66,9 @@ export default {
     async fetchVenueData() {
       try {
         this.fullscreenLoading = true
-        const res = await getSpecificVenueData(this.venueName)
+        const res = await getSpecificVenueData(this.venueId)
         console.log('获取到的会议数据:', res)
-        
+
         if (res && res.results) {
           this.venueInfo = res.results.venue || {}
           this.papers = res.results.papers || []
@@ -76,9 +77,19 @@ export default {
         }
       } catch (error) {
         console.error('获取会议数据失败:', error)
+        this.$message.error('获取会议数据失败，请稍后重试')
       } finally {
-        this.fullscreenLoading = false
+        // 添加一个小延迟，确保DOM更新完成
+        setTimeout(() => {
+          this.fullscreenLoading = false
+        }, 100)
       }
+    }
+  },
+  watch: {
+    '$route.params.id': {
+      handler: 'fetchVenueData',
+      immediate: true
     }
   }
 }
@@ -90,16 +101,16 @@ export default {
   min-height: 100vh;
   overflow: hidden;
   font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-  
+
   .animated-background {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, #f5f7fa 0%, #e4eff9 100%);
     z-index: -1;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -113,7 +124,7 @@ export default {
       opacity: 0.8;
       animation: slowFloat 15s infinite alternate ease-in-out;
     }
-    
+
     &::after {
       content: '';
       position: absolute;
@@ -126,61 +137,54 @@ export default {
       animation: pulse 15s infinite alternate;
     }
   }
-  
+
   .content-wrapper {
     position: relative;
     z-index: 1;
-    padding-top: 30px;
+    padding: 30px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-    height: 100vh;
     overflow-y: auto;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(224, 236, 255, 0.5) 100%);
-      z-index: -1;
-    }
   }
 
   .venue-header-container {
-    width: 1300px;
-    max-width: 95%;
-    margin: 0 auto 24px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
     animation: slideDown 0.8s ease-out;
   }
-  
+
   .venue-tabs-container {
-    width: 1300px;
-    max-width: 95%;
-    margin: 0 auto 24px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
     animation: slideUp 0.8s ease-out;
   }
 
   .venue-main-container {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
     display: flex;
-    width: 1300px;
-    max-width: 95%;
-    margin: 0 auto 40px;
     gap: 24px;
-    box-sizing: border-box;
+    flex: 1;
     animation: fadeIn 1s ease-in;
-    
+
     .main-content {
       flex: 3;
+      min-width: 0;
       transform: translateY(0);
       transition: all 0.5s ease;
-      min-width: 0;
-      
+
       &:hover {
         transform: translateY(-5px);
       }
     }
-    
+
     .side-content {
       flex: 1;
       min-width: 320px;
@@ -188,7 +192,7 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 24px;
-      
+
       .side-card {
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
@@ -197,35 +201,21 @@ export default {
         border-radius: 12px;
         overflow: hidden;
         transition: all 0.5s ease;
-        
+
         &:hover {
           transform: translateY(-5px);
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.07);
         }
-        
+
         &.authors-card {
           animation-delay: 0.1s;
         }
-        
+
         &.reviewers-card {
           animation-delay: 0.3s;
         }
       }
     }
-  }
-
-  a {
-    color: #409EFF;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    
-    &:hover {
-      color: #66b1ff;
-    }
-  }
-
-  li {
-    list-style: none;
   }
 }
 
@@ -234,10 +224,12 @@ export default {
     opacity: 0.3;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.5;
     transform: scale(1.1);
   }
+
   100% {
     opacity: 0.3;
     transform: scale(1);
@@ -248,6 +240,7 @@ export default {
   0% {
     transform: translateY(0) scale(1);
   }
+
   100% {
     transform: translateY(-20px) scale(1.03);
   }
@@ -258,6 +251,7 @@ export default {
     opacity: 0;
     transform: translateY(-50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -269,6 +263,7 @@ export default {
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -279,16 +274,19 @@ export default {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(20px);
 }

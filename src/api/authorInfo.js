@@ -23,6 +23,19 @@ export const getAuthorPaper = (authorId, modelId = null) => {
   });
 }
 
+// export const getSimAuthor = (authorId, modelId = null) => {
+//   // 构建请求参数
+//   const params = { id: authorId };
+
+//   if (modelId) {
+//     params.modelId = modelId;
+//   }
+
+//   return request.get('book/findSimilarAuthorsById', {
+//     params
+//   });
+// }
+
 export const getSimAuthor = (authorId, modelId = null) => {
   // 构建请求参数
   const params = { id: authorId };
@@ -31,15 +44,15 @@ export const getSimAuthor = (authorId, modelId = null) => {
     params.modelId = modelId;
   }
 
-  return request.get('book/findSimilarAuthorsById', {
+  return request_temp.get('api/author/similarAuthors', {
     params
   });
 }
 
-export const getRecommendVenue = (authorId) => {
+export const getRecommendVenue = (author_id) => {
   return request_temp.get('api/author/recommend_venues', {
     params: {
-      authorId
+      author_id
     }
   })
 }

@@ -16,18 +16,17 @@
             <!-- <el-tag>论文数: {{ Math.floor(author.npubs) }}</el-tag> -->
             <el-tag>引用数: {{ Math.floor(author.ncitation) }}</el-tag>
             <el-tag v-if="author.field" type="warning"
-              style="font-size: 16px; height: 28px; margin-right: 40px;">研究领域：{{
-                author.field
-              }}</el-tag>
+              style="font-size: 16px; height: 28px; margin-right: 40px; cursor: pointer;"
+              @click="goToField(author.field)">研究领域：{{ author.field }}</el-tag>
             <el-tag v-if="author.rec" class="recommend-tag" type="success" effect="light" size="small">
               你可能感兴趣
             </el-tag>
           </div>
         </div>
-        <div class="topRight">
+        <!-- <div class="topRight">
           <el-button plain round @click="Model">模型对比</el-button>
 
-        </div>
+        </div> -->
       </div>
       <div class="listRightMid">
         <div class="midTop">
@@ -63,6 +62,12 @@ export default {
   methods: {
     Model() {
       this.$router.push({ name: 'Model', query: { authorId: this.author.id } });
+    },
+    goToField(fieldName) {
+      this.$router.push({
+        name: 'fieldProfile',
+        params: { field_name: encodeURIComponent(fieldName) }
+      });
     },
     // 将字符串转换为标题格式（每个单词首字母大写）
     toTitleCase(str) {
