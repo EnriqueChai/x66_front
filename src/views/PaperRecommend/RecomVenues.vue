@@ -193,6 +193,108 @@ export default {
             }
           ],
           recent_papers: this.generateRecentPapers("ICLR")
+        },
+        {
+          "id": 1301,
+          "full_name": "International World Wide Web Conference",
+          "short_name": "WWW",
+          "metrics": {
+            "ccf_rank": "A",
+            "h5_index": 106,
+            "accept_rate": 14.5
+          },
+          "activeTab": "hot",
+          "hot_papers": [
+            {
+              "id": 201,
+              "title": "Intelligent Model Update Strategy for Sequential Recommendation",
+              "year": 2024,
+              "citations": 24836
+            },
+            {
+              "id": 202,
+              "title": "Advancing Web 3.0: Making Smart Contracts Smarter on Blockchain",
+              "year": 2024,
+              "citations": 23940
+            },
+            {
+              "id": 203,
+              "title": "FashionReGen: LLM-Empowered Fashion Report Generation",
+              "year": 2024,
+              "citations": 12421
+            }
+          ],
+          "recent_papers": [
+            {
+              "id": 301,
+              "title": "Can we Soft Prompt LLMs for Graph Learning Tasks?",
+              "year": 2024,
+              "citations": 345
+            },
+            {
+              "id": 302,
+              "title": "Unlink to Unlearn: Simplifying Edge Unlearning in GNNs",
+              "year": 2024,
+              "citations": 364
+            },
+            {
+              "id": 303,
+              "title": "How Good are LLMs in Generating Personalized Advertisements?",
+              "year": 2024,
+              "citations": 578
+            }
+          ]
+        },
+        {
+          "id": 3126,
+          "full_name": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+          "short_name": "KDD",
+          "metrics": {
+            "ccf_rank": "A",
+            "h5_index": 124,
+            "accept_rate": 19.0
+          },
+          "activeTab": "hot",
+          "hot_papers": [
+            {
+              "id": 401,
+              "title": "Paths2Pair: Meta-path Based Link Prediction in Billion-Scale Commercial Heterogeneous Graphs",
+              "year": 2024,
+              "citations": 24674
+            },
+            {
+              "id": 402,
+              "title": "Winning Amazon KDD Cup'24: Multi-Task Online Shopping Challenge for LLMs",
+              "year": 2024,
+              "citations": 29572
+            },
+            {
+              "id": 403,
+              "title": "DeepWalk: Online Learning of Social Representations",
+              "year": 2014,
+              "citations": 20573
+            }
+          ],
+          "recent_papers": [
+            {
+              "id": 501,
+              "title": "Causal AI at KDD 2024: Why Companies That Won't Jump on the Causal Train Now Will Have a Harder Time Later",
+              "year": 2024,
+              "citations": 324
+            },
+            {
+              "id": 502,
+              "title": "Most Influential KDD Papers (2024-09 Version)",
+              "year": 2024,
+              "citations": 154
+            },
+            {
+              "id": 503,
+              "title": "KDD 2024 Research Track Papers",
+              "year": 2024,
+              "citations": 147
+            }
+          ]
         }
       ];
       
@@ -333,6 +435,29 @@ export default {
 // 会议列表样式
 .venue-list {
   padding: 12px 12px;
+  height: 540px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c3cfe2 #f5f7fa;
+
+  // 自定义Webkit浏览器的滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f5f7fa;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #c3cfe2 0%, #a18cd1 100%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #a18cd1 0%, #8e44ad 100%);
+    }
+  }
   
   .venue-item {
     position: relative;

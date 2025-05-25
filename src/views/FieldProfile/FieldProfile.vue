@@ -14,6 +14,17 @@
       </div>
     </div>
 
+    <!-- 1.1 领域简介 -->
+    <div class="field-intro" v-if="fieldIntro">
+      <div class="intro-header">
+        <i class="el-icon-info"></i>
+        <h2>领域简介</h2>
+      </div>
+      <div class="intro-content">
+        {{ fieldIntro }}
+      </div>
+    </div>
+
     <!-- 2. 统计信息 -->
     <div class="field-stats">
       <div class="stat-card">
@@ -124,6 +135,7 @@ export default {
     return {
       loading: false,
       fieldInfo: {},
+      fieldIntro: '',
       relatedPapers: [],
       relatedAuthors: [],
       paperSortDirection: 'desc',
@@ -302,11 +314,13 @@ export default {
         
         // 设置数据
         this.fieldInfo = results.field_info;
+        this.fieldIntro = results.field_intro || '';
         this.relatedPapers = Array.isArray(results.related_papers) ? results.related_papers : [];
         this.relatedAuthors = Array.isArray(results.related_authors) ? results.related_authors : [];
         
         console.log('数据解析完成:');
         console.log('- 领域: ' + this.fieldInfo.name);
+        console.log('- 简介: ' + (this.fieldIntro ? '已加载' : '未提供'));
         console.log('- 相关论文: ' + this.relatedPapers.length + '篇');
         console.log('- 相关学者: ' + this.relatedAuthors.length + '人');
       } catch (error) {
@@ -420,6 +434,42 @@ export default {
           font-size: 14px;
         }
       }
+    }
+  }
+
+  .field-intro {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4eff9 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+    .intro-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+      i {
+        font-size: 24px;
+        color: #3498db;
+        margin-right: 10px;
+      }
+
+      h2 {
+        font-size: 20px;
+        color: #2c3e50;
+        margin: 0;
+      }
+    }
+
+    .intro-content {
+      color: #34495e;
+      font-size: 15px;
+      line-height: 1.8;
+      text-align: justify;
+      white-space: pre-line;
     }
   }
 

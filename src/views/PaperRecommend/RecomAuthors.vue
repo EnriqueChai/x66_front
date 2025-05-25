@@ -4,7 +4,7 @@
       <h3><i class="el-icon-user-solid"></i> 推荐学者</h3>
     </div>
     <div class="author-list">
-      <div v-for="(author, index) in localAuthors.slice(0, 5)" :key="index" class="author-item">
+      <div v-for="(author, index) in localAuthors.slice(0, 6)" :key="index" class="author-item">
         <div class="author-avatar">
           <span>{{ author.name.charAt(0) }}</span>
         </div>
@@ -77,6 +77,13 @@ export default {
           affiliation: "University of Oxford"
         },
         {
+          id: 2625,
+          name: "Philip S Yu",
+          total_citations: 87979,
+          fields: ["Deep Learning", "Data Mining", "Representation Learning"],
+          affiliation: "University of Illinois at Chicago"
+        },
+        {
           id: 2329,
           name: "Geoffrey E Hinton",
           total_citations: 13043,
@@ -89,6 +96,13 @@ export default {
           total_citations: 12419,
           fields: ["Object Detection", "Feature Matching", "Object Recognition"],
           affiliation: "Megvii Technology"
+        },
+        {
+          id: 13474,
+          name: "Chuan Shi",
+          total_citations: 10979,
+          fields: ["Graph Neural Networks", "Signal Processing On Graphs"],
+          affiliation: "Beijing University of Posts and Telecommunications"
         }
       ];
     }
@@ -151,6 +165,28 @@ export default {
 // 作者卡片样式
 .author-list {
   padding: 12px;
+  height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c3cfe2 #f5f7fa;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f5f7fa;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #c3cfe2 0%, #a18cd1 100%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #a18cd1 0%, #8e44ad 100%);
+    }
+  }
 
   .author-item {
     display: flex;
