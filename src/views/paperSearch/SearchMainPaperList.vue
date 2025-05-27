@@ -26,6 +26,9 @@
           <span class="meta-item">
             <i class="el-icon-reading"></i> 引用: {{ paper.ncitation || 0 }}
           </span>
+          <span class="meta-item">
+            <i class="el-icon-notebook-2"></i> {{ formatVenue(paper.venue) }}
+          </span>
           <div class="theme-tags">
             <el-tag v-for="(t, idx) in themesList" :key="idx" size="mini" effect="plain" type="info" class="theme-tag">
               {{ t }}
@@ -59,7 +62,58 @@ export default {
       ],
       specialAcronyms: {
         ieee: 'IEEE',
-        acm: 'ACM'
+        acm: 'ACM',
+        cvpr: 'CVPR',
+        iccv: 'ICCV',
+        nips: 'NeurIPS',
+        iclr: 'ICLR',
+        sigmod: 'SIGMOD',
+        sigir: 'SIGIR',
+        kdd: 'KDD',
+        icde: 'ICDE',
+        vldb: 'VLDB',
+        www: 'WWW',
+        acl: 'ACL',
+        emnlp: 'EMNLP',
+        naacl: 'NAACL',
+        coling: 'COLING',
+        icml: 'ICML',
+        ijcai: 'IJCAI',
+        aaai: 'AAAI',
+        icse: 'ICSE',
+        fse: 'FSE',
+        ase: 'ASE',
+        issta: 'ISSTA',
+        oopsla: 'OOPSLA',
+        popl: 'POPL',
+        pldi: 'PLDI',
+        sosp: 'SOSP',
+        osdi: 'OSDI',
+        usenix: 'USENIX',
+        ndss: 'NDSS',
+        sp: 'S&P',
+        ccs: 'CCS',
+        eurocrypt: 'Eurocrypt',
+        crypto: 'Crypto',
+        asiacrypt: 'Asiacrypt',
+        tcc: 'TCC',
+        stoc: 'STOC',
+        focs: 'FOCS',
+        soda: 'SODA',
+        icalp: 'ICALP',
+        esa: 'ESA',
+        wads: 'WADS',
+        sofsem: 'SOFSEM',
+        mfcs: 'MFCS',
+        stacs: 'STACS',
+        cpm: 'CPM',
+        swat: 'SWAT',
+        wabi: 'WABI',
+        sea: 'SEA',
+        ipec: 'IPEC',
+        iwoca: 'IWOCA',
+        fun: 'FUN',
+        wg: 'WG'
       }
     };
   },
@@ -113,6 +167,23 @@ export default {
     openModal() {
       const modalPaper = { ...this.paper, authors: this.authorsArray };
       this.$bus.$emit('showPaperModal', { paper: modalPaper, show: true });
+    },
+    formatVenue(venue) {
+      if (!venue) return '—';
+      
+      // 将期刊名称分词
+      return venue.split(/\s+/)
+        .map(word => {
+          // 检查是否为特殊缩写
+          const lowerWord = word.toLowerCase();
+          if (this.specialAcronyms[lowerWord]) {
+            return this.specialAcronyms[lowerWord];
+          }
+          
+          // 否则首字母大写
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ');
     }
   }
 };
@@ -221,6 +292,10 @@ export default {
 
 .meta-item .el-icon-reading {
   color: #f39c12;
+}
+
+.meta-item .el-icon-notebook-2 {
+  color: #2ecc71;
 }
 
 .theme-tags {

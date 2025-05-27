@@ -57,7 +57,7 @@
                 <i class="el-icon-reading"></i>
                 <div>
                   <h4>引用次数</h4>
-                  <p>{{ currentPaper.citations }}</p>
+                  <p>{{ currentPaper.citations || currentPaper.ncitation || currentPaper.citation || 0 }}</p>
                 </div>
               </div>
             </div>
@@ -138,7 +138,15 @@ export default {
       return '未知日期';
     },
     openPaperModal(paper) {
-      this.currentPaper = paper;
+      // 标准化论文数据
+      this.currentPaper = {
+        ...paper,
+        citations: paper.citations || paper.ncitation || paper.citation || 0,
+        summary: paper.summary || paper.abstract || paper.abstractText || '',
+        time: paper.time || paper.year || '',
+        pdfUrl: paper.pdfUrl || paper.url || ''
+      };
+      
       this.showPaperModal = true;
       document.body.style.overflow = 'hidden';
 

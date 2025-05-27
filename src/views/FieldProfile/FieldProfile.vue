@@ -33,7 +33,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ relatedPapers.length }}</div>
-          <div class="stat-label">相关论文</div>
+          <div class="stat-label">高引论文</div>
         </div>
       </div>
       <div class="stat-card">
@@ -42,7 +42,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ relatedAuthors.length }}</div>
-          <div class="stat-label">相关学者</div>
+          <div class="stat-label">重要学者</div>
         </div>
       </div>
       <div class="stat-card">
@@ -198,7 +198,7 @@ export default {
     },
     formatVenue(venue) {
       if (!venue) return '未知期刊';
-      
+
       // 处理特殊缩写
       const acronyms = {
         'ieee': 'IEEE',
@@ -213,7 +213,7 @@ export default {
         'nips': 'NIPS',
         'iclr': 'ICLR',
       };
-      
+
       // 将期刊名称分词
       return venue.split(/\s+/)
         .map(word => {
@@ -222,7 +222,7 @@ export default {
           if (acronyms[lowerWord]) {
             return acronyms[lowerWord];
           }
-          
+
           // 否则首字母大写
           return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         })
@@ -239,15 +239,15 @@ export default {
         year: paper.year,
         field: this.fieldInfo.name
       };
-      
+
       // 通过事件总线触发弹窗显示
       this.$bus.$emit('showPaperModal', { paper: paperData, show: true });
     },
     // 导航到作者页面
     navToAuthor(author) {
-      this.$router.push({ 
-        name: 'personalPage', 
-        query: { authorId: author.auto_id } 
+      this.$router.push({
+        name: 'personalPage',
+        query: { authorId: author.auto_id }
       });
     },
     sortPapersByCitation() {
@@ -276,21 +276,21 @@ export default {
         // 从路由参数中获取编码后的字段名称，并解码
         const encodedFieldName = this.$route.params.field_name;
         const fieldName = decodeURIComponent(encodedFieldName);
-        
+
         console.log('Fetching field data for:', fieldName);
-        
+
         // 获取API响应
         const response = await getFieldInfo(fieldName);
         console.log('API Response received');
-        
+
         // 尝试两种可能的数据结构访问方式
         let results;
-        
+
         // 情况1: 响应是直接从axios返回的
         if (response && response.data && response.data.results) {
           console.log('方式1: response.data.results 存在');
           results = response.data.results;
-        } 
+        }
         // 情况2: 响应已经被request_temp的拦截器处理
         else if (response && response.results) {
           console.log('方式2: response.results 存在');
@@ -302,22 +302,22 @@ export default {
           console.log('Response:', response);
           throw new Error('API返回数据格式不正确');
         }
-        
+
         // 打印找到的数据结构
         console.log('找到的API结构包含:', Object.keys(results));
-        
+
         // 检查字段并设置组件数据
         if (!results.field_info) {
           console.error('API返回数据中缺少field_info');
           throw new Error('API返回数据缺少field_info');
         }
-        
+
         // 设置数据
         this.fieldInfo = results.field_info;
         this.fieldIntro = results.field_intro || '';
         this.relatedPapers = Array.isArray(results.related_papers) ? results.related_papers : [];
         this.relatedAuthors = Array.isArray(results.related_authors) ? results.related_authors : [];
-        
+
         console.log('数据解析完成:');
         console.log('- 领域: ' + this.fieldInfo.name);
         console.log('- 简介: ' + (this.fieldIntro ? '已加载' : '未提供'));
