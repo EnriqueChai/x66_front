@@ -2,14 +2,14 @@
   <div class="venue-main-area">
     <div class="chart-section" v-loading="chartLoading">
       <div class="section-header">
-        <h3><i class="el-icon-data-line"></i> 论文发表趋势</h3>
+        <h3><i class="el-icon-data-line"></i> 文献发表趋势</h3>
       </div>
       <div ref="chartContainer" class="chart-container"></div>
     </div>
 
     <div class="papers-section" v-loading="paperLoading">
       <div class="tab-header">
-        <h3><i class="el-icon-document"></i> 论文列表</h3>
+        <h3><i class="el-icon-document"></i> 文献列表</h3>
         <div class="filter-sort">
           <el-radio-group v-model="tabPosition" size="medium">
             <el-radio-button label="按年份排序">
@@ -26,12 +26,12 @@
         </div>
       </div>
 
-      <!-- 论文列表 -->
+      <!-- 文献列表 -->
       <div class="papers-list">
         <div class="paper-items-container">
           <div v-if="tableData.length === 0 && !paperLoading" class="empty-state">
             <i class="el-icon-document"></i>
-            <span>暂无论文数据</span>
+            <span>暂无文献数据</span>
           </div>
           <transition-group name="fade-transform" mode="out-in" v-else>
             <div v-for="(row, index) in tableData" :key="row.id || index" class="paper-list-item"
@@ -176,7 +176,7 @@ export default {
           this.paperListLength = 0
         }
       } catch (error) {
-        console.error('获取论文列表失败:', error)
+        console.error('获取文献列表失败:', error)
         this.allData = []
         this.paperListLength = 0
       } finally {
@@ -245,7 +245,7 @@ export default {
     },
 
     handleRowClick(row) {
-      // 准备论文数据，格式与全局模态框要求一致
+      // 准备文献数据，格式与全局模态框要求一致
       const paper = {
         title: this.capitalizeTitle(row.title),
         authors: typeof row.authors === 'string' ? row.authors.split(',').map(a => a.trim()) : [],
@@ -419,7 +419,7 @@ export default {
           textStyle: {
             color: '#333'
           },
-          formatter: '{b}年: {c}篇论文'
+          formatter: '{b}年: {c}篇文献'
         },
         grid: {
           left: '3%',
@@ -442,7 +442,7 @@ export default {
         },
         yAxis: {
           type: 'value',
-          name: '论文数量',
+          name: '文献数量',
           nameTextStyle: {
             color: '#666'
           },
@@ -461,7 +461,7 @@ export default {
         },
         series: [
           {
-            name: '论文数',
+            name: '文献数',
             type: 'bar',
             data: yearCounts,
             itemStyle: {

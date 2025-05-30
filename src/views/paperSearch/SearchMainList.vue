@@ -14,10 +14,10 @@
           <div class="tag-class">
             <!-- <el-tag type="warning">H-index: {{ Math.floor(author.hindex) }}</el-tag> -->
             <!-- <el-tag>论文数: {{ Math.floor(author.npubs) }}</el-tag> -->
-            <el-tag>引用数: {{ Math.floor(author.ncitation) }}</el-tag>
+            <el-tag>影响力: {{ Math.floor(author.ncitation) }}</el-tag>
             <el-tag v-if="author.field" type="warning"
               style="font-size: 16px; height: 28px; margin-right: 40px; cursor: pointer;"
-              @click="goToField(author.field)">研究领域：{{ author.field }}</el-tag>
+              @click="goToField(author.field)">科技领域：{{ author.field }}</el-tag>
             <el-tag v-if="author.rec" class="recommend-tag" type="success" effect="light" size="small">
               你可能感兴趣
             </el-tag>

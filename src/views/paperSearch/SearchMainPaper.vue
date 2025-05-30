@@ -27,7 +27,7 @@
     <!-- 2. 统计信息模块 -->
     <div class="stats">
       <div class="stat-item">
-        <strong>相关论文数：</strong>{{ totalPaperCount }}
+        <strong>相关文献数：</strong>{{ totalPaperCount }}
       </div>
       <div class="stat-item year-filter">
         <strong>年份：</strong>
@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="stat-item venue-filter">
-        <strong>期刊：</strong>
+        <strong>期刊/会议：</strong>
         <div class="filter-tags">
           <el-tag v-for="(count, venue) in venueDistribution" :key="venue" class="filter-tag venue-tag"
             :type="isVenueSelected(venue) ? 'success' : 'info'" @click="handleVenueFilter(venue)">

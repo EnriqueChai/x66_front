@@ -16,8 +16,8 @@
       <div class="content">
         <!-- 分段切换按钮 -->
         <div class="switchBtn">
-          <el-button round @click="toggleView('author')" :class="{ active: currentView === 'author' }">作者</el-button>
-          <el-button round @click="toggleView('paper')" :class="{ active: currentView === 'paper' }">论文</el-button>
+          <el-button round @click="toggleView('author')" :class="{ active: currentView === 'author' }">专家</el-button>
+          <el-button round @click="toggleView('paper')" :class="{ active: currentView === 'paper' }">文献</el-button>
           <el-button round @click="toggleView('conference')"
             :class="{ active: currentView === 'conference' }">会议</el-button>
         </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="side-card authors-card">
     <div class="card-header">
-      <h3><i class="el-icon-user-solid"></i> 推荐学者</h3>
+      <h3><i class="el-icon-user-solid"></i> 推荐专家</h3>
     </div>
     <div class="author-list">
       <div v-for="(author, index) in localAuthors.slice(0, 6)" :key="index" class="author-item">
@@ -20,7 +20,7 @@
         <div class="author-actions">
           <div class="author-citations">
             <span class="citation-count">{{ author.total_citations }}</span>
-            <span class="citation-label">引用</span>
+            <span class="citation-label">影响力</span>
           </div>
           <div class="author-detail-btn">
             <el-button type="text" size="mini" @click="goToAuthorDetail(author)">
@@ -65,7 +65,7 @@ export default {
         {
           id: 2918,
           name: "Li Fei-Fei",
-          total_citations: 13377,
+          total_citations: 163377,
           fields: ["Computer Vision", "Deep Learning", "Image Recognition"],
           affiliation: "Stanford University"
         },

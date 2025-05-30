@@ -3,13 +3,13 @@
     <!-- 标题 -->
     <div class="main-title">
       <div class="title-line">GFMBench</div>
-      <div class="subtitle-line">科技文献分析系统</div>
+      <div class="subtitle-line">科技情报分析系统</div>
     </div>
 
     <!-- 搜索框整体 -->
     <div class="recomSearch">
       <div class="inputFrame">
-        <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." prefix-icon="el-icon-search"
+        <el-input v-model="input" placeholder="输入关键词搜索文献、专家或会议..." prefix-icon="el-icon-search"
           @keyup.enter="handleSearch" />
         <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">
           清空

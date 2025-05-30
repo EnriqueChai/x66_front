@@ -4,22 +4,22 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="优选论文" name="featured">
           <template slot="label">
-            <i class="el-icon-trophy"></i> 优选论文
+            <i class="el-icon-trophy"></i> 优选文献
           </template>
         </el-tab-pane>
         <el-tab-pane label="最新论文" name="latest">
           <template slot="label">
-            <i class="el-icon-time"></i> 最新论文
+            <i class="el-icon-time"></i> 最新文献
           </template>
         </el-tab-pane>
         <el-tab-pane label="高引论文" name="cited">
           <template slot="label">
-            <i class="el-icon-medal"></i> 高引论文
+            <i class="el-icon-medal"></i> 高引文献
           </template>
         </el-tab-pane>
         <el-tab-pane label="相关论文" name="related">
           <template slot="label">
-            <i class="el-icon-connection"></i> 相关论文
+            <i class="el-icon-connection"></i> 相关文献
           </template>
         </el-tab-pane>
       </el-tabs>
@@ -52,7 +52,7 @@
       <p class="empty-title">{{ getEmptyStateTitle() }}</p>
       <p class="empty-message">{{ getEmptyStateMessage() }}</p>
       <el-button type="primary" plain round size="medium" @click="switchToFeatured" v-if="activeName !== 'featured'">
-        查看优选论文
+        查看优选文献
       </el-button>
     </div>
 

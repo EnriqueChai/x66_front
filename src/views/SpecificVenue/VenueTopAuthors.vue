@@ -1,7 +1,7 @@
 <template>
   <div class="venue-top-authors">
     <div class="card-header">
-      <h3><i class="el-icon-s-custom"></i> 优秀作者</h3>
+      <h3><i class="el-icon-s-custom"></i> 优秀专家</h3>
     </div>
     <div class="authors-list" v-loading="loading">
       <div v-for="(author, index) in authors" :key="author.auto_id" class="author-card"
@@ -19,12 +19,12 @@
         </div>
         <div class="author-citations">
           <span class="citation-count">{{ author.citation }}</span>
-          <span class="citation-label">引用</span>
+          <span class="citation-label">影响力</span>
         </div>
       </div>
       <div v-if="authors.length === 0" class="empty-state">
         <i class="el-icon-warning-outline"></i>
-        <span>暂无作者数据</span>
+        <span>暂无专家数据</span>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
       })
     },
 
-    // 格式化作者姓名
+    // 格式化专家姓名
     formatAuthorName(name) {
       if (!name) return ''
       return name
@@ -127,7 +127,7 @@ export default {
     flex: 1;
     padding: 12px;
     overflow-y: auto;
-    max-height: 400px; // 设置最大高度，显示约5个作者
+    max-height: 400px; // 设置最大高度，显示约5个专家
     scrollbar-width: thin;
     scrollbar-color: #dcdfe6 #f2f6fc;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);

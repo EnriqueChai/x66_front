@@ -4,7 +4,7 @@
     <div class="searchMainTab">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="综合" name="first" />
-        <el-tab-pane label="引用数" name="third" />
+        <el-tab-pane label="影响力" name="third" />
       </el-tabs>
     </div>
 

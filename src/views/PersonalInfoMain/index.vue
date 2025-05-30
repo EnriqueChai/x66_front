@@ -14,7 +14,7 @@
 
         <div class="sideArea">
           <div class="sideArea-header">
-            <h2>学术路径规划</h2>
+            <h2>专家技术画像</h2>
           </div>
           <PersonalWordCloud :authorId="authorId" :authorField="authorField" />
           <!-- <PersonalAuthorStatistic :authorId="authorId" /> -->

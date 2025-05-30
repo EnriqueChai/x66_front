@@ -8,7 +8,7 @@
       <div class="field-info">
         <h1 class="field-name">{{ fieldInfo.name }}</h1>
         <div class="field-meta">
-          <el-tag type="info" effect="dark" class="field-type">学术领域</el-tag>
+          <el-tag type="info" effect="dark" class="field-type">科技领域</el-tag>
           <span class="field-id">ID: {{ fieldInfo.id }}</span>
         </div>
       </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ relatedPapers.length }}</div>
-          <div class="stat-label">高引论文</div>
+          <div class="stat-label">高引文献</div>
         </div>
       </div>
       <div class="stat-card">
@@ -42,7 +42,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ relatedAuthors.length }}</div>
-          <div class="stat-label">重要学者</div>
+          <div class="stat-label">重要专家</div>
         </div>
       </div>
       <div class="stat-card">
@@ -51,15 +51,15 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ totalCitations }}</div>
-          <div class="stat-label">总引用量</div>
+          <div class="stat-label">总影响力</div>
         </div>
       </div>
     </div>
 
-    <!-- 3. 相关论文列表 -->
+    <!-- 3. 相关文献列表 -->
     <div class="section">
       <div class="section-header">
-        <h2>高引论文</h2>
+        <h2>高引文献</h2>
         <el-button type="text" @click="sortPapersByCitation">
           <i :class="paperSortDirection === 'desc' ? 'el-icon-sort-down' : 'el-icon-sort-up'"></i>
           按引用量排序
@@ -92,13 +92,13 @@
       </div>
     </div>
 
-    <!-- 4. 相关学者列表 -->
+    <!-- 4. 相关专家列表 -->
     <div class="section">
       <div class="section-header">
-        <h2>重要学者</h2>
+        <h2>重要专家</h2>
         <el-button type="text" @click="sortAuthorsByCitation">
           <i :class="authorSortDirection === 'desc' ? 'el-icon-sort-down' : 'el-icon-sort-up'"></i>
-          按引用量排序
+          按影响力排序
         </el-button>
       </div>
       <div class="author-list">
@@ -110,7 +110,7 @@
             <h3 class="author-name">{{ formatName(author.name) }}</h3>
             <div class="author-meta">
               <span class="citation-count">
-                <i class="el-icon-reading"></i> 引用: {{ author.citation }}
+                <i class="el-icon-reading"></i> 影响力: {{ author.citation }}
               </span>
             </div>
           </div>
@@ -228,9 +228,9 @@ export default {
         })
         .join(' ');
     },
-    // 显示论文详情弹窗
+    // 显示文献详情弹窗
     showPaperDetail(paper) {
-      // 准备论文数据
+      // 准备文献数据
       const paperData = {
         ...paper,
         title: paper.title,
@@ -321,8 +321,8 @@ export default {
         console.log('数据解析完成:');
         console.log('- 领域: ' + this.fieldInfo.name);
         console.log('- 简介: ' + (this.fieldIntro ? '已加载' : '未提供'));
-        console.log('- 相关论文: ' + this.relatedPapers.length + '篇');
-        console.log('- 相关学者: ' + this.relatedAuthors.length + '人');
+        console.log('- 相关文献: ' + this.relatedPapers.length + '篇');
+        console.log('- 相关专家: ' + this.relatedAuthors.length + '人');
       } catch (error) {
         console.error('获取领域信息失败:', error);
         this.$message.error(error.message || '获取领域信息失败，请稍后重试');

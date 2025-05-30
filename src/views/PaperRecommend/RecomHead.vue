@@ -3,13 +3,13 @@
     <div class="header-content">
       <h1 class="main-title">
         <div class="title-line">GFMBench</div>
-        <div class="subtitle-line">科技文献分析系统</div>
+        <div class="subtitle-line">科技情报分析系统</div>
       </h1>
 
       <div class="search-section">
         <div class="recomSearch">
           <div class="inputFrame">
-            <el-input v-model="input" placeholder="输入关键词搜索文献、学者或期刊..." @keyup.enter="handleSearch" clearable />
+            <el-input v-model="input" placeholder="输入关键词搜索文献、专家或会议..." @keyup.enter="handleSearch" clearable />
             <el-tag v-if="input" type="info" effect="dark" class="clear-tag" @click="clearSearch">清空</el-tag>
             <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch"
               v-loading.fullscreen.lock="fullscreenLoading" :disabled="!input.trim()">

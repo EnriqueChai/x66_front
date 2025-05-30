@@ -2,14 +2,14 @@
   <div class="venue-main-area-wrapper">
     <div class="chart-section">
       <div class="section-header">
-        <h3><i class="el-icon-data-line"></i> 论文发表趋势</h3>
+        <h3><i class="el-icon-data-line"></i> 文献发表趋势</h3>
       </div>
       <div ref="chartContainer" class="chart-container"></div>
     </div>
 
     <div class="papers-section">
       <div class="tab-header">
-        <h3><i class="el-icon-document"></i> 论文列表</h3>
+        <h3><i class="el-icon-document"></i> 文献列表</h3>
         <div class="filter-sort">
           <el-radio-group v-model="tabPosition" size="medium">
             <el-radio-button label="按年份排序">
@@ -98,7 +98,7 @@ export default {
   },
   computed: {
     /**
-     * 按年份统计论文数量：
+     * 按年份统计文献数量：
      * 返回形如 [{ year: 2020, count: 10 }, { year: 2021, count: 15 }, ...]
      */
     paperYearStats() {
@@ -235,7 +235,7 @@ export default {
     },
 
     handleRowClick(row) {
-      // 准备论文数据
+      // 准备文献数据
       const paper = {
         title: this.capitalizeTitle(row.title) || '未知标题',
         authors: this.splitAuthors(row.author) || [],
@@ -291,7 +291,7 @@ export default {
           textStyle: {
             color: '#333'
           },
-          formatter: '{b}年: {c}篇论文'
+          formatter: '{b}年: {c}篇文献'
         },
         grid: {
           left: '3%',
@@ -314,7 +314,7 @@ export default {
         },
         yAxis: {
           type: 'value',
-          name: '论文数量',
+          name: '文献数量',
           nameTextStyle: {
             color: '#666'
           },
@@ -333,7 +333,7 @@ export default {
         },
         series: [
           {
-            name: '论文数',
+            name: '文献数',
             type: 'bar',
             data: yearCounts,
             itemStyle: {

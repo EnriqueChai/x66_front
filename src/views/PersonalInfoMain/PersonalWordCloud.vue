@@ -1,7 +1,6 @@
 <template>
   <div class="firstSide" v-loading="loading">
-    <h3>研究焦点分析</h3>
-    <!-- <hr> -->
+    <h3>专家技术特长</h3>
     <div ref="wordCloudChart" class="wordCloud"></div>
   </div>
 </template>
@@ -79,21 +78,17 @@ export default {
   methods: {
     // 处理作者信息更新
     handleAuthorInfoUpdate(authorInfo) {
-      console.log('接收到作者信息更新:', authorInfo)
       this.authorInfo = authorInfo
     },
     // 处理作者领域更新
     handleAuthorFieldUpdate(fieldName) {
-      console.log('接收到作者领域更新:', fieldName)
       this.authorField = fieldName
     },
     async fetchAuthorTags() {
       this.loading = true
       try {
         const res = await getAuthorInfo(this.authorId)
-        // 保存作者信息，包括研究领域
         this.authorInfo = res
-        console.log('获取到作者信息:', res)
         
         const tag = res.tags
         let parsedData;
@@ -102,7 +97,6 @@ export default {
           try {
             parsedData = JSON.parse(formattedString);
           } catch (error) {
-            console.error('Failed to parse authorTag:', error);
             this.loading = false
             return;
           }
@@ -113,15 +107,12 @@ export default {
         if (Array.isArray(parsedData)) {
           const splitWords = this.splitNames(parsedData)
           this.words = this.aggregateWords(splitWords)
-          console.log("解析后的词云数据:", this.words)
           this.updateChart()
         } else {
-          console.warn('authorTag is not an array:', parsedData);
           this.words = []
           this.updateChart()
         }
       } catch (error) {
-        console.error('获取作者标签数据失败:', error)
         this.words = []
         this.updateChart()
       } finally {
@@ -216,21 +207,14 @@ export default {
     // 导航到作者的主要研究领域
     navigateToAuthorField() {
       if (this.authorField) {
-        console.log('导航到作者主要研究领域:', this.authorField);
-        
-        // 使用encodeURIComponent处理可能包含的特殊字符
         const encodedFieldName = encodeURIComponent(this.authorField);
-        console.log('编码后的领域名称:', encodedFieldName);
-        
-        // 使用$router.resolve生成路由，并在新标签页打开
         const route = this.$router.resolve({
           name: 'fieldProfile',
           params: { field_name: encodedFieldName }
         });
         window.open(route.href, '_blank');
       } else {
-        console.warn('无法获取作者的研究领域信息');
-        this.$message.warning('该作者没有指定研究领域');
+        this.$message.warning('该专家没有指定研究领域');
       }
     },
     

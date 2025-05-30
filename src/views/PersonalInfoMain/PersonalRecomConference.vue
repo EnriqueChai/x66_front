@@ -1,6 +1,6 @@
 <template>
   <div class="forthSide">
-    <h3>成长节点导航</h3>
+    <h3>关键技术来源</h3>
     <div class="conferenceList" v-loading="loading">
       <div v-for="(conf, index) in sortedConferences" :key="conf.id || index" class="conferenceItem"
         @click="handleConferenceClick(conf)">
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div v-if="!loading && conferences.length === 0" class="no-data">
-        暂无推荐会议
+        暂无技术来源
       </div>
     </div>
   </div>

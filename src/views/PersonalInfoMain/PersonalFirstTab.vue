@@ -6,7 +6,7 @@
           <template #label>
             <span class="tab-label">
               <i class="el-icon-info"></i>
-              个人简介
+              专家介绍
             </span>
           </template>
         </el-tab-pane>
@@ -22,7 +22,7 @@
           <template #label>
             <span class="tab-label">
               <i class="el-icon-star-off"></i>
-              兴趣领域
+              专业领域
             </span>
           </template>
         </el-tab-pane>
@@ -32,13 +32,13 @@
     <div class="tab-content">
       <transition name="fade" mode="out-in">
         <div v-if="activeName === 'first'" key="first" class="content-panel bio">
-          <p>{{ authorBio || "暂无简介" }}</p>
+          <p>{{ authorBio || "暂无介绍" }}</p>
         </div>
         <div v-else-if="activeName === 'second'" key="second" class="content-panel bio">
           <p>{{ strippedAuthorAdu || "暂无教育背景" }}</p>
         </div>
         <div v-else-if="activeName === 'third'" key="third" class="content-panel bio">
-          <p>{{ authorInterests || "暂无兴趣领域" }}</p>
+          <p>{{ authorInterests || "暂无专业领域" }}</p>
         </div>
       </transition>
     </div>

@@ -8,7 +8,7 @@
       </svg>
       <div v-show="!loading && simAuthor.length === 0" class="empty-state">
         <i class="el-icon-warning-outline"></i>
-        <span>暂无相似作者数据</span>
+        <span>暂无数据</span>
       </div>
     </div>
   </div>

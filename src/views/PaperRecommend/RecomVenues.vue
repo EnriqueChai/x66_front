@@ -35,10 +35,10 @@
           </div>
         </div>
       
-        <!-- 论文选项卡 -->
+        <!-- 文献选项卡 -->
         <div class="venue-papers">
           <el-tabs v-model="venue.activeTab" size="mini">
-            <el-tab-pane label="热门论文" name="hot">
+            <el-tab-pane label="热门文献" name="hot">
               <div class="papers-list">
                 <div v-for="(paper, pIndex) in venue.hot_papers.slice(0,3)" :key="pIndex" class="paper-item">
                   <div class="paper-dot" :class="'dot-' + (pIndex+1)"></div>
@@ -54,7 +54,7 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="最新论文" name="recent">
+            <el-tab-pane label="最新文献" name="recent">
               <div class="papers-list">
                 <div v-for="(paper, pIndex) in venue.recent_papers.slice(0,3)" :key="pIndex" class="paper-item">
                   <div class="paper-dot" :class="'dot-recent'"></div>
@@ -302,7 +302,7 @@ export default {
     },
     
     generateRecentPapers(venue) {
-      // 为每个会议生成最近发表的论文
+      // 为每个会议生成最近发表的文献
       const recentPapersByVenue = {
         "CVPR": [
           { 

@@ -1,7 +1,7 @@
 <template>
   <div class="venue-reviewers">
     <div class="card-header">
-      <h3><i class="el-icon-user-solid"></i> 推荐审稿人</h3>
+      <h3><i class="el-icon-user-solid"></i> 推荐专家</h3>
     </div>
     <div class="reviewers-content" v-loading="loading">
       <div class="reviewers-list">
@@ -19,13 +19,13 @@
           </div>
           <div class="reviewer-citations">
             <span class="citation-count">{{ reviewer.citation }}</span>
-            <span class="citation-label">引用</span>
+            <span class="citation-label">影响力</span>
           </div>
         </div>
       </div>
       <div v-if="isEmpty" class="empty-state">
         <i class="el-icon-warning-outline"></i>
-        <span>暂无推荐审稿人</span>
+        <span>暂无推荐专家</span>
       </div>
     </div>
   </div>
